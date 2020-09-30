@@ -1,12 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-import { HeaderContainer, OptionLink } from "./header.styles";
+import "./header.styles.scss";
 
 const Header = () => {
   return (
-    <HeaderContainer>
-      <OptionLink to="/">Facewallet</OptionLink>
-    </HeaderContainer>
+    <div className="header">
+      <Link className="link-text" to="/">Facewallet</Link>
+    </div>
   );
 };
 

@@ -24,7 +24,7 @@ function Payment() {
     });
   };
   return (
-    <div>
+    <div className="group">
       <WebcamWindow />
       <form onSubmit={handleSubmit}>
         <FormInput

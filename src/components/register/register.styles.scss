@@ -1,16 +1,34 @@
 .register {
-  width: 50%;
   display: flex;
-  flex-direction: column;
-  margin: auto;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 80px;
 
-  .button {
-    justify-content: space-between;
+  .capture-window {
+    margin-left: 15%;
+    .webcam-window {
+      float: left;
+    }
+
+    .capture-button {
+      margin: 0 auto;
+    }
   }
 
-  .disabled {
-    opacity: 0.6;
-    filter: alpha(opacity = 60);
+  .form-submit {
+    margin-right: 20%;
+    .disabled {
+      opacity: 0.6;
+      filter: alpha(opacity = 60);
+    }
+    .button {
+      display: flex;
+    }
+
+    .form {
+      float: right;
+    }
   }
 }
 

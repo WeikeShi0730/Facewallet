@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 
 import "./register.styles.scss";
 
@@ -36,61 +36,79 @@ function Register() {
     setDisabled(!disabled);
   };
 
+  const webcamRef = useRef(null);
+  const [imgSrc, setImgSrc] = useState(null);
+  const handleScreenshot = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImgSrc(imageSrc);
+  }, [webcamRef, setImgSrc]);
+
   return (
     <div className="register">
-      <WebcamWindow />
-      <form className={disabled ? "disabled" : ""} onSubmit={handleSubmit}>
-        <FormInput
-          name="cardNumber"
-          type="text"
-          handleChange={handleChange}
-          value={cardNumber}
-          label="Card Number"
-          pattern="\d*"
-          maxLength="16"
-          disabled={disabled}
-          required
-        />
-
-        <FormInput
-          name="name"
-          type="text"
-          handleChange={handleChange}
-          value={name}
-          label="Name"
-          disabled={disabled}
-          required
-        />
-
-        <FormInput
-          name="cvv"
-          type="text"
-          handleChange={handleChange}
-          value={cvv}
-          label="CVV (3 Digits)"
-          pattern="\d*"
-          maxLength="3"
-          disabled={disabled}
-          required
-        />
-
-        <FormInput
-          name="expireDate"
-          type="date"
-          handleChange={handleChange}
-          value={expireDate}
-          label="Expire Date"
-          disabled={disabled}
-          required
-        />
-
-        <div className="button">
-          <CustomButton type="submit">Confirm</CustomButton>
-          <CustomButton onClick={handleDisabled} type="submit">
-            pass
-          </CustomButton>
+      <div className="capture-window">
+        <WebcamWindow className="webcam-window" ref={webcamRef} />
+        <div className="capture-button">
+          <CustomButton onClick={handleScreenshot}>Capture photo</CustomButton>
         </div>
-      </form>
+      </div>
+      <div className="form-submit">
+        <form
+          className={`form ${disabled ? "disabled" : ""}`}
+          onSubmit={handleSubmit}
+        >
+          <FormInput
+            name="cardNumber"
+            type="text"
+            handleChange={handleChange}
+            value={cardNumber}
+            label="Card Number"
+            pattern="\d*"
+            maxLength="16"
+            disabled={disabled}
+            required
+          />
+
+          <FormInput
+            name="name"
+            type="text"
+            handleChange={handleChange}
+            value={name}
+            label="Name"
+            disabled={disabled}
+            required
+          />
+
+          <FormInput
+            name="cvv"
+            type="text"
+            handleChange={handleChange}
+            value={cvv}
+            label="CVV (3 Digits)"
+            pattern="\d*"
+            maxLength="3"
+            disabled={disabled}
+            required
+          />
+
+          <FormInput
+            name="expireDate"
+            type="date"
+            handleChange={handleChange}
+            value={expireDate}
+            label="Expire Date"
+            disabled={disabled}
+            required
+          />
+
+          <div className="button">
+            <CustomButton type="submit">Confirm</CustomButton>
+            <CustomButton onClick={handleDisabled} type="submit">
+              pass
+            </CustomButton>
+          </div>
+        </form>
+      </div>
+      {imgSrc && <img src={imgSrc} alt="" />}
     </div>
   );
 }
