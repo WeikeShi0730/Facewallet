@@ -1,0 +1,22 @@
+.register {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+
+  .button {
+    justify-content: space-between;
+  }
+
+  .disabled {
+    opacity: 0.6;
+    filter: alpha(opacity = 60);
+  }
+}
+
+input[type="date"]:required:invalid::-webkit-datetime-edit {
+  color: transparent;
+}
+input[type="date"]:focus::-webkit-datetime-edit {
+  color: black !important;
+}
