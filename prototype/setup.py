@@ -27,8 +27,6 @@ from payment import *
 import numpy as np
 import cv2
 
-os.environ["FACE_SUBSCRIPTION_KEY"] = "97ed7848c921405a80168adfbe8e2039"
-os.environ["FACE_ENDPOINT"] = "https://aslfjkl1245132q.cognitiveservices.azure.com/"
 
 # Set the FACE_SUBSCRIPTION_KEY environment variable with your key as the value.
 # This key will serve all examples in this document.
