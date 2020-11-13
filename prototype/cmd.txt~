@@ -1,0 +1,8 @@
+
+train_person_group(face_client)
+
+register_person(face_client,"sample_woman","sample_woman","425224145215241525","5152","521")
+
+list_out_person(face_client)
+
+#verify_payment(face_client,verify_photo="verify_woman_1")
