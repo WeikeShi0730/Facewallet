@@ -12,18 +12,21 @@
     }
 
     .capture-button {
-      margin: 0 auto;
+      display: block;
+      margin: auto;
     }
   }
 
   .form-submit {
-    margin-right: 20%;
+    margin-right: 15%;
+
     .disabled {
       opacity: 0.6;
       filter: alpha(opacity = 60);
     }
     .button {
-      display: flex;
+      display: block;
+      width: 100%;
     }
 
     .form {

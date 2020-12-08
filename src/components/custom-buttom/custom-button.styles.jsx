@@ -19,6 +19,8 @@ export const CustomButtonContainer = styled.button`
   justify-content: center;
   margin-top: 10px;
   margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
   @media screen and (max-width: 1200px) {
     font-size: 10px;
   }
