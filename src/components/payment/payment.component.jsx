@@ -7,19 +7,19 @@ import CustomButton from "../custom-buttom/custom-button.component";
 import FormInput from "../form-input/form-input.component";
 
 function Payment() {
-  const [amount, setAmount] = useState({
+  const [price, setPrice] = useState({
     total: "",
   });
 
-  const { total } = amount;
+  const { total } = price;
   const handleSubmit = async (event) => {
     event.preventDefault();
   };
 
   const handleChange = (event) => {
     const { value, name } = event.target;
-    setAmount({
-      ...amount,
+    setPrice({
+      ...price,
       [name]: value,
     });
   };
