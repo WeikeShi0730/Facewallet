@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "../flask-backend-demo/static/react/css/main.7334dbef.chunk.css",
+    "main.js": "../flask-backend-demo/static/react/js/main.ca69f063.chunk.js",
+    "main.js.map": "../flask-backend-demo/static/react/js/main.ca69f063.chunk.js.map",
+    "runtime-main.js": "../flask-backend-demo/static/react/js/runtime-main.46e3368d.js",
+    "runtime-main.js.map": "../flask-backend-demo/static/react/js/runtime-main.46e3368d.js.map",
+    "js/2.67c62efb.chunk.js": "../flask-backend-demo/static/react/js/2.67c62efb.chunk.js",
+    "js/2.67c62efb.chunk.js.map": "../flask-backend-demo/static/react/js/2.67c62efb.chunk.js.map",
+    "../../templates/index.html": "../flask-backend-demo/static/react/../../templates/index.html",
+    "css/main.7334dbef.chunk.css.map": "../flask-backend-demo/static/react/css/main.7334dbef.chunk.css.map",
+    "js/2.67c62efb.chunk.js.LICENSE.txt": "../flask-backend-demo/static/react/js/2.67c62efb.chunk.js.LICENSE.txt",
+    "media/index.css": "../flask-backend-demo/static/react/media/Formula1-Regular_web_0.90c10fed.ttf",
+    "precache-manifest.a66900a45a4ba0e582947264a4008ad8.js": "../flask-backend-demo/static/react/precache-manifest.a66900a45a4ba0e582947264a4008ad8.js",
+    "service-worker.js": "../flask-backend-demo/static/react/service-worker.js"
+  },
+  "entrypoints": [
+    "js/runtime-main.46e3368d.js",
+    "js/2.67c62efb.chunk.js",
+    "css/main.7334dbef.chunk.css",
+    "js/main.ca69f063.chunk.js"
+  ]
+}
