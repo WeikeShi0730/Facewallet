@@ -9,7 +9,6 @@ const Header = () => {
       <Link className="link-text" to="/">
         Facewallet
       </Link>
-      <p>My Token = {window.token}</p>
     </div>
   );
 };
