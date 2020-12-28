@@ -1,0 +1,43 @@
+.register {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 80px;
+
+  .capture-window {
+    margin-left: 15%;
+    .webcam-window {
+      float: left;
+    }
+
+    .capture-button {
+      display: block;
+      margin: auto;
+    }
+  }
+
+  .form-submit {
+    margin-right: 15%;
+
+    .disabled {
+      opacity: 0.6;
+      filter: alpha(opacity = 60);
+    }
+    .button {
+      display: block;
+      width: 100%;
+    }
+
+    .form {
+      float: right;
+    }
+  }
+}
+
+input[type="date"]:required:invalid::-webkit-datetime-edit {
+  color: transparent;
+}
+input[type="date"]:focus::-webkit-datetime-edit {
+  color: black !important;
+}

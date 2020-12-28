@@ -15,4 +15,4 @@ def register():
 def payment():
     return
 
-app.run(debug=True)
+#app.run(debug=True)
