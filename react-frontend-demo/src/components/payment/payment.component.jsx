@@ -35,9 +35,7 @@ function Payment() {
           label="Total"
           required
         />
-        <div className="button">
-          <CustomButton type="submit">Confirm</CustomButton>
-        </div>
+        <CustomButton type="submit">Confirm</CustomButton>
       </form>
     </div>
   );

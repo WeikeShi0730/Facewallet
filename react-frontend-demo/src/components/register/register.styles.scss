@@ -6,9 +6,9 @@
   margin-top: 80px;
 
   .capture-window {
-    margin-left: 15%;
+    margin-right: 15%;
     .webcam-window {
-      float: left;
+      float: right;
     }
 
     .capture-button {
@@ -18,19 +18,10 @@
   }
 
   .form-submit {
-    margin-right: 15%;
-
-    .disabled {
-      opacity: 0.6;
-      filter: alpha(opacity = 60);
-    }
-    .button {
-      display: block;
-      width: 100%;
-    }
+    margin-left: 15%;
 
     .form {
-      float: right;
+      float: left;
     }
   }
 }

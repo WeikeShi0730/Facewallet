@@ -5,7 +5,7 @@ import { GlobalStyle } from "./global.styles";
 
 import Header from "./components/header/header.component";
 import Homepage from "./pages/homepage/homepage.component";
-import RegisterPage from "./pages/register/register.componnet";
+import RegisterPage from "./pages/register/register.component";
 import PaymentPage from "./pages/payment/payment.component";
 
 function App() {

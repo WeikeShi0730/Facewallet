@@ -1,6 +1,4 @@
-import styled from "styled-components";
-
-export const CustomButtonContainer = styled.button`
+.button {
   min-width: 165px;
   width: auto;
   height: 50px;
@@ -25,4 +23,9 @@ export const CustomButtonContainer = styled.button`
   @media screen and (max-width: 1200px) {
     font-size: 10px;
   }
-`;
+
+  .disable {
+    opacity: 0.3;
+    filter: alpha(opacity = 60);
+  }
+}
