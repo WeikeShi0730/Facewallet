@@ -1,4 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
+import { connect } from "react-redux";
+import { compose } from "redux";
+
+import {
+  setInfo,
+  setButton,
+  setStep,
+} from "../../redux/actions/register.action";
 
 import "./register.styles.scss";
 
@@ -7,27 +15,22 @@ import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 import WithSpinner from "../with-spinner/with-spinner.component";
 
-const Register = (props) => {
+const Register = ({
+  registerInfo,
+  photoButton,
+  step,
+  setInfo,
+  setButton,
+  setStep,
+  setIsLoading,
+}) => {
   const [photo, setPhoto] = useState({
     photo: null,
   });
-  const [cardInfo, setCardInfo] = useState({
-    name: "",
-    cardNumber: "",
-    cvv: "",
-    expireDate: "",
-  });
+  const [cardInfo, setCardInfo] = useState(registerInfo);
 
-  // const { setIsLoading } = props;
-  // useEffect(() => {
-  //   setIsLoading(false);
-  // });
-
-  const [disable, setDisable] = useState(true);
-
-  const [register, setRegister] = useState({
-    info: false,
-    photo: false,
+  useEffect(() => {
+    setIsLoading(false);
   });
 
   const { name, cardNumber, cvv, expireDate } = cardInfo;
@@ -46,7 +49,7 @@ const Register = (props) => {
     const imageSrc = webcamRef.current.getScreenshot();
     setPhoto({ photo: imageSrc });
     handleSendPhoto();
-  }, [webcamRef, photo]);
+  }, [webcamRef]);
 
   useEffect(() => {
     async function getMessage() {
@@ -58,12 +61,13 @@ const Register = (props) => {
     getMessage()
       .then((res) => res.json())
       .then((message) => console.log(message));
-  }, [register]);
+  }, []);
 
   //const handleOnClick = async () => {};
   const handleSubmit = async (event) => {
     event.preventDefault();
-    //setIsLoading(true);
+    setInfo(cardInfo);
+    setIsLoading(true);
     const response = await fetch("/register", {
       method: "POST",
       headers: {
@@ -71,19 +75,20 @@ const Register = (props) => {
       },
       body: JSON.stringify(cardInfo),
     });
-    //setIsLoading(false);
-    const filled = name && cardNumber && cvv && expireDate;
-    if (response.ok && filled) {
-      setRegister({
-        ...register,
+
+    //const filled = name && cardNumber && cvv && expireDate;
+    if (response.ok) {
+      setStep({
+        ...step,
         info: true,
       });
+      setIsLoading(false);
       console.log("info regisration success!");
     }
   };
 
   const handleSendPhoto = async () => {
-    //setIsLoading(true);
+    setIsLoading(true);
     const response = await fetch("/register", {
       method: "POST",
       headers: {
@@ -91,10 +96,10 @@ const Register = (props) => {
       },
       body: JSON.stringify(photo),
     });
-    //setIsLoading(false);
+    setIsLoading(false);
     if (response.ok) {
-      setRegister({
-        ...register,
+      setStep({
+        ...step,
         photo: true,
       });
       console.log("photo regisration success!");
@@ -102,21 +107,24 @@ const Register = (props) => {
   };
 
   useEffect(() => {
-    const { info, photo } = register;
+    const { info, photo } = step;
+    console.log(step);
     if (info) {
-      setDisable(false);
+      setButton(false);
     }
 
     if (photo) {
       alert("Regisration is done!");
-      setCardInfo({
-        name: "",
-        cardNumber: "",
-        cvv: "",
-        expireDate: "",
+      setInfo({
+        registerInfo: {
+          name: "",
+          cardNumber: "",
+          cvv: "",
+          expireDate: "",
+        },
       });
     }
-  }, [register]);
+  }, [step, setButton, setInfo]);
 
   return (
     <div className="register">
@@ -170,7 +178,7 @@ const Register = (props) => {
       <div className="capture-window">
         <WebcamWindow className="webcam-window" ref={webcamRef} />
         <div className="capture-button">
-          <CustomButton onClick={handleScreenshot} disable={disable}>
+          <CustomButton onClick={handleScreenshot} disable={photoButton}>
             Capture photo
           </CustomButton>
         </div>
@@ -179,5 +187,14 @@ const Register = (props) => {
   );
 };
 
-//export default WithSpinner(Register);
-export default Register;
+const mapStateToProps = (state) => ({
+  photoButton: state.register.buttonDisabled,
+  registerInfo: state.register.registerInfo,
+  step: state.register.stepCheck,
+});
+
+export default compose(
+  connect(mapStateToProps, { setInfo, setButton, setStep }),
+  WithSpinner
+)(Register);
+//export default Register;
