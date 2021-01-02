@@ -47,19 +47,6 @@ const Register = ({
     setPhoto({ photo: imageSrc });
   }, [webcamRef, setPhoto]);
 
-  useEffect(() => {
-    async function getMessage() {
-      const res = await fetch("/register", {
-        method: "GET",
-      });
-      return res;
-    }
-    getMessage()
-      .then((res) => res.json())
-      .then((message) => console.log(message));
-  }, [setStep]); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  //const handleOnClick = async () => {};
   const handleSubmit = async (event) => {
     event.preventDefault();
     setInfo(cardInfo);
@@ -84,7 +71,6 @@ const Register = ({
 
   const handleSendPhoto = async () => {
     if (photo.photo !== null) {
-      console.log(JSON.stringify(photo));
       setIsLoading(true);
       const response = await fetch("/register", {
         method: "POST",
@@ -105,7 +91,7 @@ const Register = ({
   };
 
   useEffect(() => {
-    handleSendPhoto();
+    handleSendPhoto(); // eslint-disable-next-line
   }, [photo]);
 
   useEffect(() => {
@@ -115,7 +101,7 @@ const Register = ({
       setButton(false);
     }
 
-    if (photo) {
+    if (info && photo) {
       alert("Regisration is done!");
       setInfo({
         registerInfo: {
@@ -125,8 +111,11 @@ const Register = ({
           expireDate: "",
         },
       });
+      setStep({ info: false, photo: false });
+      setButton(true);
+      setPhoto({ photo: null });
     }
-  }, [step, setButton, setInfo]);
+  }, [step, setButton, setInfo, setStep, setPhoto]);
 
   return (
     <div className={`${isLoading ? "isLoading" : "notLoading"}`}>
