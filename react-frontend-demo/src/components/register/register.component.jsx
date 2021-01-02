@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { withRouter } from "react-router-dom";
 
 import {
   setInfo,
@@ -14,7 +16,6 @@ import "./register.styles.scss";
 import WebcamWindow from "../camera-window/camera-window.component";
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
-//import WithSpinner from "../with-spinner/with-spinner.component";
 
 const Register = ({
   registerInfo,
@@ -27,8 +28,10 @@ const Register = ({
   setStep,
   setPhoto,
   setIsLoading,
+  history,
 }) => {
   const [cardInfo, setCardInfo] = useState(registerInfo);
+  const [id, setId] = useState();
 
   const { name, cardNumber, cvv, expireDate } = cardInfo;
 
@@ -49,9 +52,10 @@ const Register = ({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    history.push("/register/info");
     setInfo(cardInfo);
     setIsLoading(true);
-    const response = await fetch("/register", {
+    const response = await fetch("/register/info", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,20 +63,21 @@ const Register = ({
       body: JSON.stringify(cardInfo),
     });
     setIsLoading(false);
-    //const filled = name && cardNumber && cvv && expireDate;
     if (response.ok) {
       setStep({
         ...step,
         info: true,
       });
+      setId("<tempId>"); //temp id
       console.log("info regisration success!");
     }
   };
 
   const handleSendPhoto = async () => {
     if (photo.photo !== null) {
+      history.push(`/register/photo/${id}`);
       setIsLoading(true);
-      const response = await fetch("/register", {
+      const response = await fetch(`/register/photo/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -195,10 +200,13 @@ const mapStateToProps = (state) => ({
   isLoading: state.register.isLoading,
 });
 
-export default connect(mapStateToProps, {
-  setInfo,
-  setButton,
-  setStep,
-  setPhoto,
-  setIsLoading,
-})(Register);
+export default compose(
+  withRouter,
+  connect(mapStateToProps, {
+    setInfo,
+    setButton,
+    setStep,
+    setPhoto,
+    setIsLoading,
+  })
+)(Register);
