@@ -23,25 +23,26 @@ sys.path.append('.')
 from azure.utils import *
 from azure.register import *
 from azure.payment import *
+import constant
 
 app = Flask("__main__")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db=SQLAlchemy(app)
-from routes import *
-from database import *
 
 AZURE_KEY = os.environ['FACE_SUBSCRIPTION_KEY']
 AZURE_ENDPOINT = os.environ['FACE_ENDPOINT']
 
 face_client = FaceClient(AZURE_ENDPOINT, CognitiveServicesCredentials(AZURE_KEY))
 
-PERSON_GROUP_ID = 'prototype_group'
+PERSON_GROUP_ID = constant.PERSON_GROUP_ID
 #TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
 #delete_person_group(face_client,PERSON_GROUP_ID)
 #create_person_group(face_client,PERSON_GROUP_ID)
 
+from routes import *
+from database import *
 # 删除表
 db.drop_all()
 # 创建表
