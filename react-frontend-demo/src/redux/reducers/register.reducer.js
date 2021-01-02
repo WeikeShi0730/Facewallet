@@ -1,4 +1,10 @@
-import { SET_INFO, SET_PHOTO_BUTTON, SET_STEP_CHECK } from "../actions/types";
+import {
+  SET_INFO,
+  SET_PHOTO_BUTTON,
+  SET_STEP_CHECK,
+  SET_PHOTO,
+  SET_LOADING,
+} from "../actions/types";
 
 const initialState = {
   registerInfo: {
@@ -14,6 +20,12 @@ const initialState = {
     info: false,
     photo: false,
   },
+
+  image: {
+    photo: null,
+  },
+
+  isLoading: false,
 };
 
 export default function (state = initialState, action) {
@@ -35,6 +47,17 @@ export default function (state = initialState, action) {
         stepCheck: action.payload,
       };
 
+    case SET_PHOTO:
+      return {
+        ...state,
+        image: action.payload,
+      };
+
+    case SET_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload,
+      };
     default:
       return state;
   }
