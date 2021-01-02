@@ -3,6 +3,19 @@ import time
 import numpy as np
 import cv2
 
+def check_person_exist(client,person_name_at_bank_acc,PERSON_GROUP_ID='prototype_group'):
+    exist_person_list = client.person_group_person.list(PERSON_GROUP_ID)
+    if (exist_person_list is not None):
+        person_name_list = [x.name for x in exist_person_list]
+        #print ("exist_person_list: " + str(person_name_list))
+        if person_name_at_bank_acc not in person_name_list:
+            return False
+        else:
+            #print ("Person " + str(person_name_at_bank_acc)+" already exists not need to create")
+            return True
+    else:
+        return False
+
 def register_person(client,person_photo,person_name,bank_acc,bank_pin,bank_cvv,PERSON_GROUP_ID='prototype_group'):
     exist_person_list = client.person_group_person.list(PERSON_GROUP_ID)
     if (exist_person_list is not None):
@@ -47,10 +60,4 @@ def add_new_person(client,person_photo,person_name,bank_acc,bank_pin,bank_cvv,PE
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
     
-def list_out_person(client,PERSON_GROUP_ID='prototype_group'):
-    person_list = client.person_group_person.list(PERSON_GROUP_ID)
-    print ("existing person: \n")
-    for x in person_list:
-        print (x)
-    print ("\n\n")
 

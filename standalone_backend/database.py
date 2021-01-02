@@ -23,4 +23,5 @@ class Customer(db.Model):
    account_cvv=db.Column(db.String(3),nullable=False)
    account_date=db.Column(db.String(4),nullable=False)
    email=db.Column(db.String(50),unique=True,nullable=True)
+   payment_cnt=db.Column(db.Integer(),nullable=True)
 

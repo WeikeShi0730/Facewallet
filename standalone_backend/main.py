@@ -16,12 +16,21 @@ from azure.cognitiveservices.vision.face import FaceClient
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person, SnapshotObjectType, OperationStatusType
 
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
 sys.path.append('.')
 from azure.utils import *
 from azure.register import *
 from azure.payment import *
 
 app = Flask("__main__")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db=SQLAlchemy(app)
+from routes import *
+from database import *
 
 AZURE_KEY = os.environ['FACE_SUBSCRIPTION_KEY']
 AZURE_ENDPOINT = os.environ['FACE_ENDPOINT']
@@ -29,49 +38,18 @@ AZURE_ENDPOINT = os.environ['FACE_ENDPOINT']
 face_client = FaceClient(AZURE_ENDPOINT, CognitiveServicesCredentials(AZURE_KEY))
 
 PERSON_GROUP_ID = 'prototype_group'
-TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
+#TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
 #delete_person_group(face_client,PERSON_GROUP_ID)
-create_person_group(face_client,PERSON_GROUP_ID)
+#create_person_group(face_client,PERSON_GROUP_ID)
 
-@app.route("/")
-def homepage():
-    
-    return "Homepage for sanity"
-
-@app.route("/testing", methods=['POST'])
-def testing():
-    data = json.loads(request.data, strict=False)
-    print (data)
-    return data
-
-@app.route("/register", methods=['POST'])
-def register():
-    data = json.loads(request.data, strict=False)
-    if "photo" in data:
-        register_photo(data)
-    else:
-        register_info(data)
-    return data
-
-
-def register_info(info_data):
-    time.sleep(1)
-    return info_data, 201
-
-
-def register_photo(photo_data):
-    time.sleep(5)
-    return photo_data, 201
-
-
-@app.route("/register", methods=['GET'])
-def register_message():
-    info = True
-    photo = True
-    message = "ok" if (info and photo) else "nok"
-    return jsonify({'message': message})
-
-
-@app.route("/payment")
-def payment():
-    return "payment"
+# 删除表
+db.drop_all()
+# 创建表
+db.create_all()
+# 添加用户
+customer1=Customer(id='400065323',first_name='Bohui',last_name='Yu',phone_number='6479365120',account_number='1234123412341234',account_cvv='123',account_date='0922',email='yub14@mcmaster.ca')
+customer2=Customer(id='400050636',first_name='Weike',last_name='Shi',phone_number='647936666',account_number='1234123412341234',account_cvv='456',account_date='0922',email='shiw14@mcmaster.ca')
+customer3=Customer(id='400099173',first_name='Haolin',last_name='Ma',phone_number='6479365555',account_number='1234123412341234',account_cvv='123',account_date='0922',email='mah16@mcmaster.ca')
+customer4=Customer(id='400104626',first_name='Yunan',last_name='Zhou',phone_number='6479365111',account_number='1234123412341234',account_cvv='123',account_date='0922',email='zhouy142@mcmaster.ca')
+db.session.add_all([customer1,customer2,customer3,customer4])
+db.session.commit()

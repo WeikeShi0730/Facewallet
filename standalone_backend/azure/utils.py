@@ -26,4 +26,10 @@ def create_person_group(client,person_group_name):
     else:
         client.person_group.create(person_group_id=person_group_name, name=person_group_name,recognition_model='recognition_03')
     
+def list_out_person(client,PERSON_GROUP_ID='prototype_group'):
+    person_list = client.person_group_person.list(PERSON_GROUP_ID)
+    print ("existing person: \n")
+    for x in person_list:
+        print (x)
+    print ("\n\n")
 
