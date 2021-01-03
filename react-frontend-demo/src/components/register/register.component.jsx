@@ -76,8 +76,9 @@ const Register = ({
         ...step,
         info: true,
       });
-      const tempId = response.person_id;
-      setId(tempId); //temp id
+      const json = await response.json();
+      const personId = json.person_id;
+      setId(personId);
       console.log("info regisration success!");
     }
   };
