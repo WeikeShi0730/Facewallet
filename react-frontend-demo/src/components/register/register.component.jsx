@@ -68,7 +68,8 @@ const Register = ({
         ...step,
         info: true,
       });
-      setId("<tempId>"); //temp id
+      const tempId = response.person_id;
+      setId(tempId); //temp id
       console.log("info regisration success!");
     }
   };
