@@ -9,6 +9,7 @@ import {
   setStep,
   setPhoto,
   setIsLoading,
+  setPersonId,
 } from "../../redux/actions/register.action";
 
 import "./register.styles.scss";
@@ -23,16 +24,15 @@ const Register = ({
   step,
   photo,
   isLoading,
+  personId,
   setInfo,
   setButton,
   setStep,
   setPhoto,
   setIsLoading,
+  setPersonId,
   history,
 }) => {
-  const [cardInfo, setCardInfo] = useState(registerInfo);
-  const [id, setId] = useState();
-
   const {
     firstName,
     lastName,
@@ -40,12 +40,12 @@ const Register = ({
     cardNumber,
     cvv,
     expireDate,
-  } = cardInfo;
+  } = registerInfo;
 
   const handleChange = (event) => {
     const { value, name } = event.target;
-    setCardInfo({
-      ...cardInfo,
+    setInfo({
+      ...registerInfo,
       [name]: value,
     });
   };
@@ -54,20 +54,19 @@ const Register = ({
   const webcamRef = useRef(null);
   const handleScreenshot = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
-    setPhoto({ photo: imageSrc });
+    setPhoto(imageSrc);
   }, [webcamRef, setPhoto]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     history.push("/register/info");
-    setInfo(cardInfo);
     setIsLoading(true);
     const response = await fetch("/register/info", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(cardInfo),
+      body: JSON.stringify(registerInfo),
     });
     console.log(registerInfo);
     setIsLoading(false);
@@ -78,22 +77,23 @@ const Register = ({
       });
       const json = await response.json();
       const personId = json.person_id;
-      setId(personId);
+      setPersonId(personId);
       console.log("info regisration success!");
     }
   };
 
   const handleSendPhoto = async () => {
-    if (photo.photo !== null) {
-      history.push(`/register/photo/${id}`);
+    if (photo !== null) {
+      history.push(`/register/photo/${personId}`);
       setIsLoading(true);
-      const response = await fetch(`/register/photo/${id}`, {
+      const response = await fetch(`/register/photo/${personId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(photo),
+        body: JSON.stringify({ photo: photo }),
       });
+      console.log(JSON.stringify({ photo: photo }));
       setIsLoading(false);
       if (response.ok) {
         setStep({
@@ -130,7 +130,7 @@ const Register = ({
       });
       setStep({ info: false, photo: false });
       setButton(true);
-      setPhoto({ photo: null });
+      setPhoto(null);
     }
   }, [step, setButton, setInfo, setStep, setPhoto]);
 
@@ -228,6 +228,7 @@ const mapStateToProps = (state) => ({
   step: state.register.stepCheck,
   photo: state.register.image,
   isLoading: state.register.isLoading,
+  personId: state.register.personId,
 });
 
 export default compose(
@@ -238,5 +239,6 @@ export default compose(
     setStep,
     setPhoto,
     setIsLoading,
+    setPersonId,
   })
 )(Register);
