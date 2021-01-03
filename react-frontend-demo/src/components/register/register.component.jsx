@@ -33,7 +33,14 @@ const Register = ({
   const [cardInfo, setCardInfo] = useState(registerInfo);
   const [id, setId] = useState();
 
-  const { name, cardNumber, cvv, expireDate } = cardInfo;
+  const {
+    firstName,
+    lastName,
+    phoneNumber,
+    cardNumber,
+    cvv,
+    expireDate,
+  } = cardInfo;
 
   const handleChange = (event) => {
     const { value, name } = event.target;
@@ -62,6 +69,7 @@ const Register = ({
       },
       body: JSON.stringify(cardInfo),
     });
+    console.log(registerInfo);
     setIsLoading(false);
     if (response.ok) {
       setStep({
@@ -111,10 +119,12 @@ const Register = ({
       alert("Regisration is done!");
       setInfo({
         registerInfo: {
-          name: "",
-          cardNumber: "",
+          first_name: "",
+          last_name: "",
+          phone_number: "",
+          card_number: "",
           cvv: "",
-          expireDate: "",
+          expire_date: "",
         },
       });
       setStep({ info: false, photo: false });
@@ -136,22 +146,40 @@ const Register = ({
         <div className="form-submit">
           <form className="form" onSubmit={handleSubmit}>
             <FormInput
-              name="cardNumber"
+              name="first_name"
+              type="text"
+              handleChange={handleChange}
+              value={firstName}
+              label="First Name"
+              required
+            />
+            <FormInput
+              name="last_name"
+              type="text"
+              handleChange={handleChange}
+              value={lastName}
+              label="Last Name"
+              required
+            />
+
+            <FormInput
+              name="phone_number"
+              type="text"
+              handleChange={handleChange}
+              value={phoneNumber}
+              label="Phone Number"
+              pattern="\d*"
+              required
+            />
+
+            <FormInput
+              name="card_number"
               type="text"
               handleChange={handleChange}
               value={cardNumber}
               label="Card Number"
               pattern="\d*"
               maxLength="16"
-              required
-            />
-
-            <FormInput
-              name="name"
-              type="text"
-              handleChange={handleChange}
-              value={name}
-              label="Name"
               required
             />
 
@@ -167,7 +195,7 @@ const Register = ({
             />
 
             <FormInput
-              name="expireDate"
+              name="expire_date"
               type="date"
               handleChange={handleChange}
               value={expireDate}

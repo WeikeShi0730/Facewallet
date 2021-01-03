@@ -8,10 +8,12 @@ import {
 
 const initialState = {
   registerInfo: {
-    name: "",
-    cardNumber: "",
+    first_name: "",
+    last_name: "",
+    phone_number: "",
+    card_number: "",
     cvv: "",
-    expireDate: "",
+    expire_date: "",
   },
 
   buttonDisabled: true,
