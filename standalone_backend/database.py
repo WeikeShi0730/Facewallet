@@ -16,24 +16,14 @@ class Customer(db.Model):
    # 定以字段
    # db.Column表示一个字段
 
-   #id = db.Column(db.String(50),primary_key=True)
-   #first_name = db.Column(db.String(50),nullable=False)
-   #last_name=db.Column(db.String(50),nullable=False)
-   #phone_number=db.Column(db.String(15),nullable=False,unique=True)
-   #account_number=db.Column(db.String(16),nullable=False)
-   #account_cvv=db.Column(db.String(3),nullable=False)
-   #account_date=db.Column(db.String(4),nullable=False)
-   #email=db.Column(db.String(50),unique=True,nullable=True)
-   #payment_cnt=db.Column(db.Integer(),nullable=True)
-   #reg_image_cnt=db.Column(db.Integer(),nullable=True)
-
    id = db.Column(db.String(50),primary_key=True)
    first_name = db.Column(db.String(50),nullable=False)
-   last_name=db.Column(db.String(50),nullable=True)
-   phone_number=db.Column(db.String(15),nullable=True,unique=True)
-   account_number=db.Column(db.String(16),nullable=False)
-   account_cvv=db.Column(db.String(3),nullable=False)
-   account_date=db.Column(db.String(10),nullable=False)
-   email=db.Column(db.String(50),unique=True,nullable=True)
+   last_name=db.Column(db.String(50),nullable=False)
+   phone_number=db.Column(db.String(15),nullable=False,unique=True)
+   card_number=db.Column(db.String(16),nullable=False)
+   cvv=db.Column(db.String(3),nullable=False)
+   expire_date=db.Column(db.String(10),nullable=False)
+   #email=db.Column(db.String(50),unique=True,nullable=True)
    payment_cnt=db.Column(db.Integer(),nullable=True)
    reg_image_cnt=db.Column(db.Integer(),nullable=True)
+

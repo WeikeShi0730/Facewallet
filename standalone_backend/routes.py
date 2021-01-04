@@ -33,22 +33,22 @@ def testing():
 
 @app.route("/register/info", methods=['POST'])
 def post_info():
-    data = json.loads(request.data, strict=False)
+    register_info = json.loads(request.data, strict=False)
+    data = register_info.get('registerInfo')
     print (data)
     print (type(data))
     #customer = Customer(
         #first_name=data['first_name'], 
         #last_name=data['last_name'], 
         #phone_number=data['phone_number'], 
-        #account_number=data['account_number'], 
-        #account_cvv=data['account_cvv'], 
+        #card_number=data['account_number'], 
+        #cvv=data['cvv'], 
         #email=data['email'],
-        #account_date=data['account_date']) 
+        #expire_date=data['expire_date']) 
     #register = RegisterForm(data)
 
     if (check_form_not_none(data)): 
-        #person_name_at_bank_acc = data['first_name'] + "_" + data['last_name'] + "@" + data['account_number']
-        person_name_at_bank_acc = data['name'] + "@" + data['cardNumber']
+        person_name_at_bank_acc = data['first_name'] + "_" + data['last_name'] + "@" + data['card_number']
         print (person_name_at_bank_acc)
         if (check_person_exist(face_client,person_name_at_bank_acc)):
             print ("user exist")
@@ -61,20 +61,13 @@ def post_info():
             #because 2nd time called this, we dont have the id, we need to store it frist 
 
             customer_info = Customer(
-                    #id=person_id,
-                    #first_name=data.get('first_name'),
-                    #last_name=data.get('last_name'),
-                    #phone_number=data.get('phone_number'),
-                    #account_number=data.get('account_number'),
-                    #account_cvv=data.get('account_cvv'),
-                    #account_date=data.get('account_date'),
-                    #email=data.get('email')
-
                     id=person_id,
-                    first_name=data.get('name'),
-                    account_number=data.get('cardNumber'),
-                    account_cvv=data.get('cvv'),
-                    account_date=data.get('expireDate')
+                    first_name=data.get('first_name'),
+                    last_name=data.get('last_name'),
+                    phone_number=data.get('phone_number'),
+                    card_number=data.get('card_number'),
+                    cvv=data.get('cvv'),
+                    expire_date=data.get('expire_date')
                     )
             db.session.add_all([customer_info])
             db.session.commit()
@@ -132,26 +125,15 @@ def post_photo(person_id = None):
 
     return jsonify({'message': 'reponse'}),200
 
-def readb64(base64_string):
-    sbuf = StringIO()
-    print (type(base64_string))
-    sbuf.write(base64.b64decode(base64_string))
-    pimg = Image.open(sbuf)
-    return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
 
 def check_form_not_none(data):
     if (
-        #data.get('first_name') is not None and
-        #data.get('last_name') is not None and
-        #data.get('phone_number') is not None and
-        #data.get('account_number') is not None and
-        #data.get('account_cvv') is not None and
-        #data.get('account_date') is not None and
-        #True #dummy value to keep format
-        data.get('name') is not None and
-        data.get('cardNumber') is not None and
+        data.get('first_name') is not None and
+        data.get('last_name') is not None and
+        data.get('phone_number') is not None and
+        data.get('card_number') is not None and
         data.get('cvv') is not None and
-        data.get('expireDate') is not None and
+        data.get('expire_date') is not None and
         True #dummy value to keep format
         ): 
         return True
