@@ -30,7 +30,6 @@ function Payment({ amount, isLoading, setAmount, setIsLoading }) {
       console.log(JSON.stringify({ amount: amount }));
 
       setIsLoading(false);
-      console.log(response);
       if (response.ok) {
         console.log("payment success!");
       }
@@ -47,7 +46,7 @@ function Payment({ amount, isLoading, setAmount, setIsLoading }) {
       </div>
       <div className="group">
         <WebcamWindow />
-        <form onSubmit={handleSubmit}>
+        <form className="form" onSubmit={handleSubmit}>
           <FormInput
             name="total"
             type="number"
