@@ -119,14 +119,12 @@ const Register = ({
     if (info && photo) {
       alert("Regisration is done!");
       setInfo({
-        registerInfo: {
-          first_name: "",
-          last_name: "",
-          phone_number: "",
-          card_number: "",
-          cvv: "",
-          expire_date: "",
-        },
+        first_name: "",
+        last_name: "",
+        phone_number: "",
+        card_number: "",
+        cvv: "",
+        expire_date: "",
       });
       setStep({ info: false, photo: false });
       setButton(true);
