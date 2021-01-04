@@ -219,5 +219,5 @@ def payment_photo():
                     first_person_name = face_client.person_group_person.get(constant.PERSON_GROUP_ID,first_candidates.person_id).name
                     print('Person name {} with person_id {} matched with this cerification with a confidence of {}.'.format(first_person_name, first_person_id, first_person_confidence)) 
                         
-                    return jsonify({'message': 'succeed', 'person_id' : first_person_id, 'require_phone_number' : 0}),200
+                    return jsonify({'message': 'succeed', 'person_id' : first_person_id, 'require_phone_number' : 0, 'confidence' : first_person_confidence}),200
     return jsonify({'message': 'reponse'}),200
