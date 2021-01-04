@@ -1,4 +1,6 @@
 import constant
+import time
+from main import TrainingStatusType
 def list_out_person_group(client):
     person_group_list = client.person_group.list()
     print ("existing person group: \n")
@@ -34,3 +36,19 @@ def list_out_person(client,PERSON_GROUP_ID=constant.PERSON_GROUP_ID):
         print (x)
     print ("\n\n")
 
+def train_person_group(client,PERSON_GROUP_ID=constant.PERSON_GROUP_ID):
+    print('Training the person group...')
+    # Train the person group
+    train_start_time = time.time()
+    client.person_group.train(PERSON_GROUP_ID)
+    while (True):
+        training_status = client.person_group.get_training_status(PERSON_GROUP_ID)
+        print("Training status: {}.".format(training_status.status))
+        print()
+        if (training_status.status is TrainingStatusType.succeeded):
+            break
+        elif (training_status.status is TrainingStatusType.failed):
+            sys.exit('Training the person group has failed.')
+        time.sleep(1)
+    train_end_time = time.time()
+    print ("training take {}. ".format(train_end_time-train_start_time))
