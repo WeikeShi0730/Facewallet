@@ -38,8 +38,8 @@ face_client = FaceClient(AZURE_ENDPOINT, CognitiveServicesCredentials(AZURE_KEY)
 
 PERSON_GROUP_ID = constant.PERSON_GROUP_ID
 #TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
-#delete_person_group(face_client,PERSON_GROUP_ID)
-#create_person_group(face_client,PERSON_GROUP_ID)
+delete_person_group(face_client,PERSON_GROUP_ID)
+create_person_group(face_client,PERSON_GROUP_ID)
 
 from routes import *
 from database import *
