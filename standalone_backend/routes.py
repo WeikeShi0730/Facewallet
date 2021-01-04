@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 from main import app,face_client,db
 from forms import *
 from database import *
+from azure.cognitiveservices.vision.face.models import APIErrorException
 import sys
 sys.path.append('.')
 from azure.utils import *
@@ -33,8 +34,10 @@ def testing():
 
 @app.route("/register/info", methods=['POST'])
 def post_info():
-    register_info = json.loads(request.data, strict=False)
-    data = register_info.get('registerInfo')
+    data = json.loads(request.data, strict=False)
+    #data = register_info.get('registerInfo')
+    #print (register_info)
+    #print (type(register_info))
     print (data)
     print (type(data))
     #customer = Customer(
@@ -113,15 +116,32 @@ def post_photo(person_id = None):
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         #print (type(img))
         #cv2.imshow('img',img)
-        cv2.imwrite('./img.jpg', img) 
-        file_p = open('./img.jpg', 'r+b')
+        cv2.imwrite('./cache_register_photo/{person_id_name}.jpg'.format(person_id_name = person_id), img) 
+        file_p = open('./cache_register_photo/{person_id_name}.jpg'.format(person_id_name = person_id), 'r+b')
         #when we add face, we can also add the name@bank as the argument
-        #face_client.person_group_person.add_face_from_url(constant.PERSON_GROUP_ID, person_id, image_content, name="ma@123")
-
-        face_client.person_group_person.add_face_from_stream(constant.PERSON_GROUP_ID, person_id, file_p)#, name="ma@123")
+        #PersistedFace_id = face_client.person_group_person.add_face_from_stream(constant.PERSON_GROUP_ID, person_id, image_content, name="ma@123")
+        try:
+            response_info = face_client.person_group_person.add_face_from_stream(constant.PERSON_GROUP_ID, person_id, file_p)#, name="ma@123")
+            print (response_info)
+        except APIErrorException:
+            print ("no face is detected")
+            return jsonify({'message': "no face is detected"}),200
         #person_id = create_person(face_client,person_name_at_bank_acc)
-
-        return jsonify({'message': 'ok'}),200
+        train_person_group(face_client)
+        #try:
+        #    train_person_group(face_client)
+        #except:
+        #    print ("training not succeed")
+        #    return jsonify({'message': "training not succeed"}),200
+        
+        if (constant.KEEP_CACHE_PHOTO == 0 ):
+            try:
+                os.remove('./cache_register_photo/{person_id_name}.jpg'.format(person_id_name = person_id))
+                print ("photo is removed")
+            except PermissionError:
+                print ("delete photo permission denied")
+            
+        return jsonify({'message': 'photo is added'}),200
 
     return jsonify({'message': 'reponse'}),200
 
