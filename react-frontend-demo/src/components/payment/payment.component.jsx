@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import { connect } from "react-redux";
 
-import { setAmount } from "../../redux/actions/payment.action";
+import { setAmount, setPhoto } from "../../redux/actions/payment.action";
 import { setIsLoading } from "../../redux/actions/register.action";
 
 import "./payment.styles.scss";
@@ -10,25 +10,44 @@ import WebcamWindow from "../camera-window/camera-window.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 import FormInput from "../form-input/form-input.component";
 
-function Payment({ amount, isLoading, setAmount, setIsLoading }) {
+function Payment({
+  amount,
+  isLoading,
+  photo,
+  setAmount,
+  setIsLoading,
+  setPhoto,
+}) {
   const handleChange = (event) => {
     const { value } = event.target;
     setAmount(value);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (amount !== "") {
+  // webcam
+  const webcamRef = useRef(null);
+  const handleScreenshot = useCallback(
+    (event) => {
+      event.preventDefault();
+      const imageSrc = webcamRef.current.getScreenshot();
+      setPhoto(imageSrc);
+    },
+    [webcamRef, setPhoto]
+  );
+
+  useEffect(() => {
+    handleSubmit(); // eslint-disable-next-line
+  }, [photo]);
+
+  const handleSubmit = async () => {
+    if (photo !== null && amount !== "") {
       setIsLoading(true);
       const response = await fetch(`/payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: amount }),
+        body: JSON.stringify({ amount: amount, photo: photo }),
       });
-      console.log(JSON.stringify({ amount: amount }));
-
       setIsLoading(false);
       if (response.ok) {
         console.log("payment success!");
@@ -45,8 +64,8 @@ function Payment({ amount, isLoading, setAmount, setIsLoading }) {
         <div></div>
       </div>
       <div className="group">
-        <WebcamWindow />
-        <form className="form" onSubmit={handleSubmit}>
+        <WebcamWindow ref={webcamRef} />
+        <form className="form" onSubmit={handleScreenshot}>
           <FormInput
             name="total"
             type="number"
@@ -64,10 +83,12 @@ function Payment({ amount, isLoading, setAmount, setIsLoading }) {
 
 const mapStateToProps = (state) => ({
   amount: state.payment.price,
-  isLoading: state.register.isLoading,
+  isLoading: state.payment.isLoading,
+  photo: state.payment.image,
 });
 
 export default connect(mapStateToProps, {
   setAmount,
   setIsLoading,
+  setPhoto,
 })(Payment);
