@@ -9,6 +9,7 @@ import {
   setStep,
   setPhoto,
   setIsLoading,
+  setPersonId,
 } from "../../redux/actions/register.action";
 
 import "./register.styles.scss";
@@ -23,22 +24,28 @@ const Register = ({
   step,
   photo,
   isLoading,
+  personId,
   setInfo,
   setButton,
   setStep,
   setPhoto,
   setIsLoading,
+  setPersonId,
   history,
 }) => {
-  const [cardInfo, setCardInfo] = useState(registerInfo);
-  const [id, setId] = useState();
-
-  const { name, cardNumber, cvv, expireDate } = cardInfo;
+  const {
+    firstName,
+    lastName,
+    phoneNumber,
+    cardNumber,
+    cvv,
+    expireDate,
+  } = registerInfo;
 
   const handleChange = (event) => {
     const { value, name } = event.target;
-    setCardInfo({
-      ...cardInfo,
+    setInfo({
+      ...registerInfo,
       [name]: value,
     });
   };
@@ -47,43 +54,46 @@ const Register = ({
   const webcamRef = useRef(null);
   const handleScreenshot = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
-    setPhoto({ photo: imageSrc });
+    setPhoto(imageSrc);
   }, [webcamRef, setPhoto]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     history.push("/register/info");
-    setInfo(cardInfo);
     setIsLoading(true);
     const response = await fetch("/register/info", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(cardInfo),
+      body: JSON.stringify(registerInfo),
     });
+    console.log(registerInfo);
     setIsLoading(false);
     if (response.ok) {
       setStep({
         ...step,
         info: true,
       });
-      setId("<tempId>"); //temp id
+      const json = await response.json();
+      const personId = json.person_id;
+      setPersonId(personId);
       console.log("info regisration success!");
     }
   };
 
   const handleSendPhoto = async () => {
-    if (photo.photo !== null) {
-      history.push(`/register/photo/${id}`);
+    if (photo !== null) {
+      history.push(`/register/photo/${personId}`);
       setIsLoading(true);
-      const response = await fetch(`/register/photo/${id}`, {
+      const response = await fetch(`/register/photo/${personId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(photo),
+        body: JSON.stringify({ photo: photo }),
       });
+      console.log(JSON.stringify({ photo: photo }));
       setIsLoading(false);
       if (response.ok) {
         setStep({
@@ -110,15 +120,17 @@ const Register = ({
       alert("Regisration is done!");
       setInfo({
         registerInfo: {
-          name: "",
-          cardNumber: "",
+          first_name: "",
+          last_name: "",
+          phone_number: "",
+          card_number: "",
           cvv: "",
-          expireDate: "",
+          expire_date: "",
         },
       });
       setStep({ info: false, photo: false });
       setButton(true);
-      setPhoto({ photo: null });
+      setPhoto(null);
     }
   }, [step, setButton, setInfo, setStep, setPhoto]);
 
@@ -135,22 +147,40 @@ const Register = ({
         <div className="form-submit">
           <form className="form" onSubmit={handleSubmit}>
             <FormInput
-              name="cardNumber"
+              name="first_name"
+              type="text"
+              handleChange={handleChange}
+              value={firstName}
+              label="First Name"
+              required
+            />
+            <FormInput
+              name="last_name"
+              type="text"
+              handleChange={handleChange}
+              value={lastName}
+              label="Last Name"
+              required
+            />
+
+            <FormInput
+              name="phone_number"
+              type="text"
+              handleChange={handleChange}
+              value={phoneNumber}
+              label="Phone Number"
+              pattern="\d*"
+              required
+            />
+
+            <FormInput
+              name="card_number"
               type="text"
               handleChange={handleChange}
               value={cardNumber}
               label="Card Number"
               pattern="\d*"
               maxLength="16"
-              required
-            />
-
-            <FormInput
-              name="name"
-              type="text"
-              handleChange={handleChange}
-              value={name}
-              label="Name"
               required
             />
 
@@ -166,7 +196,7 @@ const Register = ({
             />
 
             <FormInput
-              name="expireDate"
+              name="expire_date"
               type="date"
               handleChange={handleChange}
               value={expireDate}
@@ -198,6 +228,7 @@ const mapStateToProps = (state) => ({
   step: state.register.stepCheck,
   photo: state.register.image,
   isLoading: state.register.isLoading,
+  personId: state.register.personId,
 });
 
 export default compose(
@@ -208,5 +239,6 @@ export default compose(
     setStep,
     setPhoto,
     setIsLoading,
+    setPersonId,
   })
 )(Register);

@@ -4,6 +4,7 @@ import {
   SET_STEP_CHECK,
   SET_PHOTO,
   SET_LOADING,
+  SET_PERSON_ID,
 } from "../actions/types";
 
 export const setInfo = (info) => (dispatch) => {
@@ -38,5 +39,12 @@ export const setIsLoading = (isLoading) => (dispatch) => {
   dispatch({
     type: SET_LOADING,
     payload: isLoading,
+  });
+};
+
+export const setPersonId = (id) => (dispatch) => {
+  dispatch({
+    type: SET_PERSON_ID,
+    payload: id,
   });
 };

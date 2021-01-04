@@ -4,14 +4,17 @@ import {
   SET_STEP_CHECK,
   SET_PHOTO,
   SET_LOADING,
+  SET_PERSON_ID,
 } from "../actions/types";
 
 const initialState = {
   registerInfo: {
-    name: "",
-    cardNumber: "",
+    first_name: "",
+    last_name: "",
+    phone_number: "",
+    card_number: "",
     cvv: "",
-    expireDate: "",
+    expire_date: "",
   },
 
   buttonDisabled: true,
@@ -21,11 +24,11 @@ const initialState = {
     photo: false,
   },
 
-  image: {
-    photo: null,
-  },
+  image: null,
 
   isLoading: false,
+
+  personId: null,
 };
 
 export default function (state = initialState, action) {
@@ -57,6 +60,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         isLoading: action.payload,
+      };
+
+    case SET_PERSON_ID:
+      return {
+        ...state,
+        personId: action.payload,
       };
     default:
       return state;
