@@ -34,24 +34,13 @@ def testing():
 @app.route("/register/info", methods=['POST'])
 def post_info():
     data = json.loads(request.data, strict=False)
-    #data = register_info.get('registerInfo')
-    #print (register_info)
-    #print (type(register_info))
     print (data)
     print (type(data))
-    #customer = Customer(
-        #first_name=data['first_name'], 
-        #last_name=data['last_name'], 
-        #phone_number=data['phone_number'], 
-        #card_number=data['account_number'], 
-        #cvv=data['cvv'], 
-        #email=data['email'],
-        #expire_date=data['expire_date']) 
-    #register = RegisterForm(data)
 
     if (check_form_not_none(data)): 
         person_name_at_bank_acc = data['first_name'] + "_" + data['last_name'] + "@" + data['card_number']
         print (person_name_at_bank_acc)
+        #MM_todo - check person whether exist in data base instead of AI model
         if (check_person_exist(face_client,person_name_at_bank_acc)):
             print ("user exist")
             return jsonify({'message': 'user already exist','name@bank':person_name_at_bank_acc}),200
@@ -70,6 +59,8 @@ def post_info():
                     card_number=data.get('card_number'),
                     cvv=data.get('cvv'),
                     expire_date=data.get('expire_date')
+                    #MM_todo - register payment cnt intialize t0 0
+
                     )
             db.session.add_all([customer_info])
             db.session.commit()
@@ -219,5 +210,7 @@ def payment_photo():
                     first_person_name = face_client.person_group_person.get(constant.PERSON_GROUP_ID,first_candidates.person_id).name
                     print('Person name {} with person_id {} matched with this cerification with a confidence of {}.'.format(first_person_name, first_person_id, first_person_confidence)) 
                         
+                    #MM_todo query database, return user all info
+                    #MM_todo set confidence threholds, check payment_cnt
                     return jsonify({'message': 'succeed', 'person_id' : first_person_id, 'require_phone_number' : 0, 'confidence' : first_person_confidence}),200
     return jsonify({'message': 'reponse'}),200
