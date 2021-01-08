@@ -2,7 +2,7 @@ import csv
 import boto3
 import base64
 from botocore.exceptions import ClientError
-'''
+
 #从本地joe.csv read aws key
 #key 是存在csv里， 也可以写入flask环境变量
 with open('joe.csv','r') as input:
@@ -11,7 +11,7 @@ with open('joe.csv','r') as input:
     for line in reader:
         access_key_id = line[2]
         secret_access_key = line[3]
-'''
+client = boto3.client('rekognition', region_name='us-east-2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
 '''
 #简单识别sample
 photo = 'C:/capstone/Facewallet_fork/AWS_Rekognition/???.jpg'
@@ -24,7 +24,6 @@ response = client.detect_faces(
 '''
 def create_collection(collection_id):
 
-    client=boto3.client('rekognition')
 
     #Create a collection
     print('Creating collection:' + collection_id)
@@ -37,7 +36,7 @@ def list_collections():
 
     max_results=2
     
-    client=boto3.client('rekognition')
+
 
     #Display all the collections
     print('Displaying collections...')
@@ -64,7 +63,7 @@ def list_collections():
 def describe_collection(collection_id):
 
     print('Attempting to describe collection ' + collection_id)
-    client=boto3.client('rekognition')
+
 
     try:
         response=client.describe_collection(CollectionId=collection_id)
@@ -85,7 +84,7 @@ def delete_collection(collection_id):
 
 
     print('Attempting to delete collection ' + collection_id)
-    client=boto3.client('rekognition')
+
     status_code=0
     try:
         response=client.delete_collection(CollectionId=collection_id)
@@ -102,7 +101,7 @@ def delete_collection(collection_id):
 
 def add_faces_to_collection(photo,photo_name,collection_id):
 
-    client = boto3.client('rekognition')
+
     with open (photo,'rb') as source_image:
         source_bytes = source_image.read()
 
@@ -129,7 +128,7 @@ def add_faces_to_collection(photo,photo_name,collection_id):
 
 def delete_faces_from_collection(collection_id, faces):
 
-    client=boto3.client('rekognition')
+
 
     response=client.delete_faces(CollectionId=collection_id,
                                FaceIds=faces)
@@ -146,7 +145,7 @@ def list_faces_in_collection(collection_id):
     faces_count=0
     tokens=True
 
-    client=boto3.client('rekognition')
+
     response=client.list_faces(CollectionId=collection_id,
                                MaxResults=maxResults)
 
@@ -184,11 +183,10 @@ def search_face_in_collection(photo,collection_id):
     threshold = 70
     maxFaces=2
 
-    client=boto3.client('rekognition')
 
   
     response=client.search_faces_by_image(CollectionId=collectionId,
-                                Image={'Bytes': test_byte},
+                                Image={'Bytes': source_bytes},
                                 FaceMatchThreshold=threshold,
                                 MaxFaces=maxFaces)
 
@@ -222,19 +220,19 @@ def main():
     indexed_faces_count=add_faces_to_collection(photo,'trump',collection_id)
     print("Faces indexed count: " + str(indexed_faces_count))
     '''
-    '''
+
     faces_count=list_faces_in_collection(collection_id)
     print("faces count: " + str(faces_count))
+
+
     '''
-
-
     faceMatches=search_face_in_collection(photo,collection_id)
     print ('Matching faces')
     for match in faceMatches:
             print ('FaceId:' + match['Face']['FaceId'])
             print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
             print
-
+    '''
     
 
 
