@@ -1,34 +1,25 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { CONFIG } from './config.js';
+import React from "react";
+import { Switch, Route } from "react-router-dom";
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-        players: []
-    };
-  }
+import { GlobalStyle } from "./global.styles";
 
-  componentDidMount() {
-    fetch(CONFIG.API_BASE_URL)
-        .then(results => results.json())
-        .then(players => this.setState({players: players}));
-  }
+import Header from "./components/header/header.component";
+import Homepage from "./pages/homepage/homepage.component";
+import RegisterPage from "./pages/register/register.component";
+import PaymentPage from "./pages/payment/payment.component";
 
-  render() {
-    const players = this.state.players.map((player, index) => <li key={index}>{player.lastname} {player.firstname}</li>);
-
-    return (
-      <div>
-          <h1>Players list</h1>
-          <ul>
-            {players}
-          </ul>
-      </div>
-    );
-  }
+function App() {
+  return (
+    <div>
+      <GlobalStyle />
+      <Header />
+      <Switch>
+        <Route exact path="/" component={Homepage} />
+        <Route path="/register" component={RegisterPage} />
+        <Route path="/payment" component={PaymentPage} />
+      </Switch>
+    </div>
+  );
 }
 
 export default App;

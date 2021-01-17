@@ -1,17 +1,21 @@
 # base image
-FROM node:14.15.3
+FROM node:14.15.3-alpine
 
 # set working directory
-RUN mkdir /usr/src/app
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # add `/usr/src/app/node_modules/.bin` to $PATH
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
 # install and cache app dependencies
-COPY package.json /usr/src/app/package.json
+# COPY . /usr/src/app/.
+# COPY package.json /usr/src/app/package.json 
+COPY . ./
+COPY package.json ./package.json 
 RUN npm install --silent
-RUN npm install react-scripts@1.1.1 -g --silent
+RUN npm install react-scripts@3.4.3 -g --silent
 
 # start app
+CMD ["npm", "build"]
 CMD ["npm", "start"]
