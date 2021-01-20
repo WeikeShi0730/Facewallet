@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "formula1-display-regular";
+  src: url("./assets/Formula1-Regular_web_0.ttf") format("woff"),
+    url("./assets/Formula1-Regular_web_0.ttf") format("opentype"),
+    url("./assets/Formula1-Regular_web_0.ttf") format("truetype");
+}
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color:#C5C6C7;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
