@@ -27,7 +27,9 @@ $main-color: black;
       outline: none;
     }
 
-    @include shrinkLabel();
+    &:focus ~ .form-input-label {
+      @include shrinkLabel();
+    }
   }
 
   input[type="password"] {
@@ -44,6 +46,8 @@ $main-color: black;
     top: 10px;
     transition: 300ms ease all;
 
-    @include shrinkLabel();
+    &.shrink {
+      @include shrinkLabel();
+    }
   }
 }

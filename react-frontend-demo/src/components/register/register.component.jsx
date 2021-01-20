@@ -34,12 +34,12 @@ const Register = ({
   history,
 }) => {
   const {
-    firstName,
-    lastName,
-    phoneNumber,
-    cardNumber,
+    first_name,
+    last_name,
+    phone_number,
+    card_number,
     cvv,
-    expireDate,
+    expire_date,
   } = registerInfo;
 
   const handleChange = (event) => {
@@ -148,7 +148,7 @@ const Register = ({
               name="first_name"
               type="text"
               handleChange={handleChange}
-              value={firstName}
+              value={first_name}
               label="First Name"
               required
             />
@@ -156,7 +156,7 @@ const Register = ({
               name="last_name"
               type="text"
               handleChange={handleChange}
-              value={lastName}
+              value={last_name}
               label="Last Name"
               required
             />
@@ -165,7 +165,7 @@ const Register = ({
               name="phone_number"
               type="text"
               handleChange={handleChange}
-              value={phoneNumber}
+              value={phone_number}
               label="Phone Number"
               pattern="\d*"
               required
@@ -175,7 +175,7 @@ const Register = ({
               name="card_number"
               type="text"
               handleChange={handleChange}
-              value={cardNumber}
+              value={card_number}
               label="Card Number"
               pattern="\d*"
               maxLength="16"
@@ -197,7 +197,7 @@ const Register = ({
               name="expire_date"
               type="date"
               handleChange={handleChange}
-              value={expireDate}
+              value={expire_date}
               label="Expire Date"
               required
             />
