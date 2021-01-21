@@ -1,29 +1,28 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
 
-import "./hompage.styles.scss";
+//import "./hompage.styles.scss";
 
 import CustomButton from "../../components/custom-buttom/custom-button.component";
 
-const Homepage = ({ history }) => {
+const SignedInMerchant = ({ history }) => {
   return (
     <div className="custom-button-container">
       <CustomButton
         onClick={() => {
-          history.push("/customer");
+          history.push("/merchant/signin");
         }}
       >
-        Customer
+        Transaction
       </CustomButton>
       <CustomButton
         onClick={() => {
-          history.push("/merchant");
+          history.push("/merchant/register");
         }}
       >
-        Merchant
+        Facepay
       </CustomButton>
     </div>
   );
 };
 
-export default withRouter(Homepage);
+export default SignedInMerchant;

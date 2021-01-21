@@ -1,15 +1,11 @@
 import React from "react";
 
-import "./payment.styles";
+import "./payment.styles.scss";
 
 import Payment from "../../components/payment/payment.component";
 
 function PaymentPage() {
-  return (
-    <div>
-      <Payment />
-    </div>
-  );
+  return <Payment />;
 }
 
 export default PaymentPage;

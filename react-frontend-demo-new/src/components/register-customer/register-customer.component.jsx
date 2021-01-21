@@ -12,7 +12,7 @@ import {
   setPersonId,
 } from "../../redux/actions/register.action";
 
-import "./register.styles.scss";
+import "./register-customer.styles.scss";
 
 import WebcamWindow from "../camera-window/camera-window.component";
 import FormInput from "../form-input/form-input.component";
@@ -61,7 +61,11 @@ const Register = ({
     event.preventDefault();
     history.push("/register/info");
     setIsLoading(true);
-    const response = await fetch("/register/info", {
+    let formData = new FormData();
+    for (let field in registerInfo) {
+      formData.append(field, registerInfo[field]);
+    }
+    const response = await fetch("api/merchant/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

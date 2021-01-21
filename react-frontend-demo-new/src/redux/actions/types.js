@@ -8,3 +8,6 @@ export const SET_PERSON_ID = "SET_PERSON_ID";
 
 //payment
 export const SET_AMOUNT = "SET_AMOUNT";
+
+//User
+export const SET_CURRENT_USER = "SET_CURRENT_USER";
