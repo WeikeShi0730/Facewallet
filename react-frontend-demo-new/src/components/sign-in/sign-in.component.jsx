@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter, useParams } from "react-router-dom";
 
-import { setIsLoading } from "../../redux/actions/register.action";
+import { setIsLoading, setPersonId } from "../../redux/actions/register.action";
 
 import "./sign-in.styles.scss";
 
@@ -34,19 +34,19 @@ const SignIn = ({ isLoading, setIsLoading, setPersonId, history }) => {
     for (let field in signInInfo) {
       formData.append(field, signInInfo[field]);
     }
-    console.log(formData);
-    const response = await fetch(`api/user=${user}/signin`, {
+    const response = await fetch(`/api/${user}/signin`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: formData,
     });
     setIsLoading(false);
     const json = await response.json();
     const personId = json.person_id;
     setPersonId(personId);
-    console.log("info regisration success!");
+    if (personId === undefined) {
+      alert(json.error);
+    } else {
+      history.push(`/${user}/${personId}/profile`);
+    }
   };
 
   return (
@@ -96,5 +96,6 @@ export default compose(
   withRouter,
   connect(mapStateToProps, {
     setIsLoading,
+    setPersonId,
   })
 )(SignIn);

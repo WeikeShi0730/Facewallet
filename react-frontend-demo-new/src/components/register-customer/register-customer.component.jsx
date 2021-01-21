@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 
 import {
-  setInfo,
   setButton,
   setStep,
   setPhoto,
@@ -19,13 +18,11 @@ import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 
 const Register = ({
-  registerInfo,
   photoButton,
   step,
   photo,
   isLoading,
   personId,
-  setInfo,
   setButton,
   setStep,
   setPhoto,
@@ -33,18 +30,20 @@ const Register = ({
   setPersonId,
   history,
 }) => {
-  const {
-    first_name,
-    last_name,
-    phone_number,
-    card_number,
-    cvv,
-    expire_date,
-  } = registerInfo;
-
+  const [registerInfo, setRegisterInfo] = useState({
+    first_name: "",
+    last_name: "",
+    phone_number: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+    card_number: "",
+    cvv: "",
+    expire_date: "",
+  });
   const handleChange = (event) => {
     const { value, name } = event.target;
-    setInfo({
+    setRegisterInfo({
       ...registerInfo,
       [name]: value,
     });
@@ -57,22 +56,34 @@ const Register = ({
     setPhoto(imageSrc);
   }, [webcamRef, setPhoto]);
 
+  const {
+    first_name,
+    last_name,
+    phone_number,
+    email,
+    password,
+    confirm_password,
+    card_number,
+    cvv,
+    expire_date,
+  } = registerInfo;
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    history.push("/register/info");
+    if (password !== confirm_password) {
+      alert("Passwords do not match");
+      return;
+    }
+    history.push("/customer/register/info");
     setIsLoading(true);
     let formData = new FormData();
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
-    const response = await fetch("api/merchant/register", {
+    const response = await fetch("/api/customer/register/info", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(registerInfo),
+      body: formData,
     });
-    console.log(registerInfo);
     setIsLoading(false);
     if (response.ok) {
       setStep({
@@ -80,6 +91,7 @@ const Register = ({
         info: true,
       });
       const json = await response.json();
+
       const personId = json.person_id;
       setPersonId(personId);
       console.log("info regisration success!");
@@ -88,7 +100,7 @@ const Register = ({
 
   const handleSendPhoto = async () => {
     if (photo !== null) {
-      history.push(`/register/photo/${personId}`);
+      history.push(`/customer/register/photo/${personId}`);
       setIsLoading(true);
       const response = await fetch(`/register/photo/${personId}`, {
         method: "POST",
@@ -97,7 +109,6 @@ const Register = ({
         },
         body: JSON.stringify({ photo: photo }),
       });
-      console.log(JSON.stringify({ photo: photo }));
       setIsLoading(false);
       if (response.ok) {
         setStep({
@@ -122,10 +133,14 @@ const Register = ({
 
     if (info && photo) {
       alert("Regisration is done!");
-      setInfo({
+      history.push(`/customer/${personId}/profile`); //to profile page
+      setRegisterInfo({
         first_name: "",
         last_name: "",
         phone_number: "",
+        email: "",
+        password: "",
+        confirm_password: "",
         card_number: "",
         cvv: "",
         expire_date: "",
@@ -134,7 +149,7 @@ const Register = ({
       setButton(true);
       setPhoto(null);
     }
-  }, [step, setButton, setInfo, setStep, setPhoto]);
+  }, [step, setButton, setRegisterInfo, setStep, setPhoto]);
 
   return (
     <div className={`${isLoading ? "isLoading" : "notLoading"}`}>
@@ -172,6 +187,31 @@ const Register = ({
               value={phone_number}
               label="Phone Number"
               pattern="\d*"
+              required
+            />
+
+            <FormInput
+              name="email"
+              type="email"
+              handleChange={handleChange}
+              value={email}
+              label="Eamil"
+              required
+            />
+            <FormInput
+              name="password"
+              type="password"
+              handleChange={handleChange}
+              value={password}
+              label="Password"
+              required
+            />
+            <FormInput
+              name="confirm_password"
+              type="password"
+              handleChange={handleChange}
+              value={confirm_password}
+              label="Confirm Password"
               required
             />
 
@@ -226,7 +266,6 @@ const Register = ({
 
 const mapStateToProps = (state) => ({
   photoButton: state.register.buttonDisabled,
-  registerInfo: state.register.registerInfo,
   step: state.register.stepCheck,
   photo: state.register.image,
   isLoading: state.register.isLoading,
@@ -236,7 +275,6 @@ const mapStateToProps = (state) => ({
 export default compose(
   withRouter,
   connect(mapStateToProps, {
-    setInfo,
     setButton,
     setStep,
     setPhoto,

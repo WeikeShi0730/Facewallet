@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import Webcam from "react-webcam";
 
-import { CheckoutPageContainer } from "./camera-window.styles";
+import "./camera-window.styles.scss";
 
 const WebcamWindow = forwardRef((props, ref) => {
   const videoConstraints = {
@@ -11,17 +11,16 @@ const WebcamWindow = forwardRef((props, ref) => {
   };
 
   return (
-    <CheckoutPageContainer>
-      <Webcam
-        ref={ref}
-        audio={false}
-        videoConstraints={videoConstraints}
-        width={400}
-        height={400}
-        mirrored={true}
-        screenshotFormat="image/jpeg"
-      />
-    </CheckoutPageContainer>
+    <Webcam
+    className="webcam"
+      ref={ref}
+      audio={false}
+      videoConstraints={videoConstraints}
+      width={400}
+      height={400}
+      mirrored={true}
+      screenshotFormat="image/jpeg"
+    />
   );
 });
 

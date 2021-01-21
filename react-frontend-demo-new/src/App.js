@@ -24,13 +24,13 @@ function App() {
         <Route exact path="/" component={Homepage} />
         <Route exact path="/customer" component={MainCustomer} />
         <Route exact path="/merchant" component={MainMerchant} />
-        <Route exact path="/:customerId/profile" component={ProfileCustomer} />
+        <Route exact path="/customer/:customerId/profile" component={ProfileCustomer} />
         <Route
           exact
           path="/merchant/:merchantId/profile"
           component={ProfileMerchant}
         />
-        <Route exact path="/customer/register" component={RegisterCustomer} />
+        <Route path="/customer/register" component={RegisterCustomer} />
         <Route exact path="/merchant/register" component={RegisterMerchant} />
         <Route exact path="/user=:user/signin" component={SignInPage} />
         <Route

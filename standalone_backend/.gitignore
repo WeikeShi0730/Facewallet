@@ -1,0 +1,7 @@
+__pycache__/
+azure/
+cache_payment_photo/
+cache_register_photo/
+venv/
+.flaskenv
+cmd.sh

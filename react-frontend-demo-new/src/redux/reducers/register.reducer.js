@@ -8,15 +8,6 @@ import {
 } from "../actions/types";
 
 const initialState = {
-  registerInfo: {
-    first_name: "",
-    last_name: "",
-    phone_number: "",
-    card_number: "",
-    cvv: "",
-    expire_date: "",
-  },
-
   buttonDisabled: true,
 
   stepCheck: {
