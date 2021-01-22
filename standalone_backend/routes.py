@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, json
 import glob
 import re
 import cv2
+import numpy as np
 import base64
 from io import BytesIO,StringIO
 from PIL import Image, ImageDraw, ImageFont
