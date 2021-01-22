@@ -4,13 +4,22 @@ import { compose } from "redux";
 import { withRouter, useParams } from "react-router-dom";
 
 import { setIsLoading, setPersonId } from "../../redux/actions/register.action";
+import { setCurrentCustomer } from "../../redux/actions/customer.action";
+import { setCurrentMerchant } from "../../redux/actions/merchant.action";
+import { setCurrentUser } from "../../redux/actions/user.action";
 
 import "./sign-in.styles.scss";
 
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 
-const SignIn = ({ isLoading, setIsLoading, setPersonId, history }) => {
+const SignIn = ({
+  isLoading,
+  setIsLoading,
+  setPersonId,
+  setCurrentUser,
+  history,
+}) => {
   const [signInInfo, setSignInInfo] = useState({
     email: "",
     password: "",
@@ -41,10 +50,21 @@ const SignIn = ({ isLoading, setIsLoading, setPersonId, history }) => {
     setIsLoading(false);
     const json = await response.json();
     const personId = json.person_id;
-    setPersonId(personId);
     if (personId === undefined) {
       alert(json.error);
     } else {
+      setPersonId(personId);
+      if (user === "customer") {
+        setCurrentUser({
+          personId: personId,
+          type: "customer",
+        });
+      } else {
+        setCurrentUser({
+          personId: personId,
+          type: "merchant",
+        });
+      }
       history.push(`/${user}/${personId}/profile`);
     }
   };
@@ -97,5 +117,8 @@ export default compose(
   connect(mapStateToProps, {
     setIsLoading,
     setPersonId,
+    setCurrentCustomer,
+    setCurrentMerchant,
+    setCurrentUser,
   })
 )(SignIn);

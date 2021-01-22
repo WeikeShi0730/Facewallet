@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 
 //import "./hompage.styles.scss";
 
-const ProfileCustomer = () => {
-  return <div>hello</div>;
+const ProfileCustomer = ({ currentUser }) => {
+
+  
+
+
+  return <div>{currentUser}</div>;
 };
 
-export default ProfileCustomer;
+const mapStateToProps = (state) => ({
+  currentUser: state.user.currentUser,
+});
+export default connect(mapStateToProps)(ProfileCustomer);

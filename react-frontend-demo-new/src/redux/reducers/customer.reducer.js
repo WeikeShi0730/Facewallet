@@ -1,18 +1,18 @@
-import { SET_CURRENT_USER } from "../actions/types";
+import { SET_CURRENT_CUSTOMER } from "../actions/types";
 
 const initialState = {
-  currentUser: {
-    personId: "",
+  currentCustomer: {
+    id: "",
     type: "",
   },
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case SET_CURRENT_USER:
+    case SET_CURRENT_CUSTOMER:
       return {
         ...state,
-        currentUser: action.payload,
+        currentCustomer: action.payload,
       };
     default:
       return state;
