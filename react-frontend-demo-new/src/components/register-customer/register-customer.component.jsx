@@ -16,6 +16,7 @@ import "./register-customer.styles.scss";
 import WebcamWindow from "../camera-window/camera-window.component";
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
+import { setCurrentUser } from "../../redux/actions/user.action";
 
 const Register = ({
   photoButton,
@@ -28,6 +29,7 @@ const Register = ({
   setPhoto,
   setIsLoading,
   setPersonId,
+  setCurrentUser,
   history,
 }) => {
   const [registerInfo, setRegisterInfo] = useState({
@@ -94,6 +96,10 @@ const Register = ({
 
       const personId = json.person_id;
       setPersonId(personId);
+      setCurrentUser({
+        personId: personId,
+        type: "customer",
+      });
       console.log("info regisration success!");
     }
   };
@@ -102,7 +108,7 @@ const Register = ({
     if (photo !== null) {
       history.push(`/customer/register/photo/${personId}`);
       setIsLoading(true);
-      const response = await fetch(`/register/photo/${personId}`, {
+      const response = await fetch(`/api/customer/register/photo/${personId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -280,5 +286,6 @@ export default compose(
     setPhoto,
     setIsLoading,
     setPersonId,
+    setCurrentUser,
   })
 )(Register);
