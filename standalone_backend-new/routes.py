@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request, json
 import glob
 import re
 import cv2
+import numpy as np
 import base64
 from io import BytesIO, StringIO
 from PIL import Image, ImageDraw, ImageFont
@@ -106,7 +107,7 @@ def post_photo_test():
     return jsonify({'message': 'reponse'}), 200
 
 
-@app.route("/register/photo/<person_id>", methods=['POST'])
+@app.route("/api/customer/register/photo/<person_id>", methods=['POST'])
 def post_photo(person_id=None):
     data = json.loads(request.data, strict=False)
     # print (data.get('photo'))
