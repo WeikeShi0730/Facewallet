@@ -93,14 +93,16 @@ const Register = ({
         info: true,
       });
       const json = await response.json();
-
-      const personId = json.person_id;
-      setPersonId(personId);
-      setCurrentUser({
-        personId: personId,
-        type: "customer",
-      });
-      console.log("info regisration success!");
+      try {
+        const personId = json.person_id;
+        setCurrentUser({
+          personId: personId,
+          type: "customer",
+        });
+        console.log("info regisration success!");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -126,6 +128,13 @@ const Register = ({
     }
   };
 
+  useEffect(() => {
+    setCurrentUser({
+      personId: "",
+      type: "",
+    });
+  }, []);
+  
   useEffect(() => {
     handleSendPhoto(); // eslint-disable-next-line
   }, [photo]);

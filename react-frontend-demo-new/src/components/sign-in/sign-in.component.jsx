@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter, useParams } from "react-router-dom";
@@ -18,6 +18,7 @@ const SignIn = ({
   setIsLoading,
   setPersonId,
   setCurrentUser,
+  currentUser,
   history,
 }) => {
   const [signInInfo, setSignInInfo] = useState({
@@ -33,6 +34,19 @@ const SignIn = ({
       [name]: value,
     });
   };
+
+  //const signedIn = currentUser !== null && currentUser.type === "merchant";
+
+  // setCurrentUser({
+  //   personId: "",
+  //   type: "",
+  // });
+  useEffect(() => {
+    setCurrentUser({
+      personId: "",
+      type: "",
+    });
+  }, []);
 
   const { user } = useParams();
 
@@ -66,7 +80,7 @@ const SignIn = ({
             type: "merchant",
           });
         }
-        history.push(`/${user}/${personId}/profile`);
+        history.push(`/${user}/${personId}`);
       }
     } catch (error) {
       console.log("User not found", error);
@@ -114,6 +128,7 @@ const SignIn = ({
 
 const mapStateToProps = (state) => ({
   isLoading: state.register.isLoading,
+  currentUser: state.user.currentUser,
 });
 
 export default compose(

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
@@ -9,12 +9,14 @@ import { setIsLoading, setPersonId } from "../../redux/actions/register.action";
 
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
+import { setCurrentUser } from "../../redux/actions/user.action";
 
 const Register = ({
   isLoading,
   personId,
   setIsLoading,
   setPersonId,
+  setCurrentUser,
   history,
 }) => {
   const [registerInfo, setRegisterInfo] = useState({
@@ -57,11 +59,26 @@ const Register = ({
     setIsLoading(false);
     if (response.ok) {
       const json = await response.json();
-      const personId = json.person_id;
-      setPersonId(personId);
-      console.log("info regisration success!");
+      try {
+        const personId = json.person_id;
+        setCurrentUser({
+          personId: personId,
+          type: "merchant",
+        });
+        console.log("info regisration success!");
+        history.push(`/merchant/${personId}`);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+
+  useEffect(() => {
+    setCurrentUser({
+      personId: "",
+      type: "",
+    });
+  }, []);
 
   return (
     <div className={`${isLoading ? "isLoading" : "notLoading"}`}>
@@ -148,5 +165,6 @@ export default compose(
   connect(mapStateToProps, {
     setIsLoading,
     setPersonId,
+    setCurrentUser,
   })
 )(Register);
