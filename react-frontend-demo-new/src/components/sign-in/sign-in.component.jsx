@@ -49,23 +49,27 @@ const SignIn = ({
     });
     setIsLoading(false);
     const json = await response.json();
-    const personId = json.person_id;
-    if (personId === undefined) {
-      alert(json.error);
-    } else {
-      setPersonId(personId);
-      if (user === "customer") {
-        setCurrentUser({
-          personId: personId,
-          type: "customer",
-        });
+    try {
+      const personId = json.person_id;
+      if (personId === undefined) {
+        alert(json.error);
       } else {
-        setCurrentUser({
-          personId: personId,
-          type: "merchant",
-        });
+        setPersonId(personId);
+        if (user === "customer") {
+          setCurrentUser({
+            personId: personId,
+            type: "customer",
+          });
+        } else {
+          setCurrentUser({
+            personId: personId,
+            type: "merchant",
+          });
+        }
+        history.push(`/${user}/${personId}/profile`);
       }
-      history.push(`/${user}/${personId}/profile`);
+    } catch (error) {
+      console.log("User not found", error);
     }
   };
 

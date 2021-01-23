@@ -49,11 +49,8 @@ const Register = ({
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
-    const response = await fetch("api/merchant/register/", {
+    const response = await fetch("/api/merchant/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: formData,
     });
     console.log(registerInfo);
