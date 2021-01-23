@@ -4,7 +4,10 @@ import { connect } from "react-redux";
 //import "./hompage.styles.scss";
 
 const ProfileCustomer = ({ currentUser }) => {
-  return <div>{currentUser.personId}</div>;
+  const signedIn = currentUser !== null && currentUser.type === "customer";
+  return (
+    <div>{signedIn ? <div>{currentUser.personId}</div> : <div></div>}</div>
+  );
 };
 
 const mapStateToProps = (state) => ({
