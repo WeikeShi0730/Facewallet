@@ -2,7 +2,7 @@ import React, { useRef, useCallback } from "react";
 import { connect } from "react-redux";
 
 import { setAmount } from "../../redux/actions/payment.action";
-import { setIsLoading } from "../../redux/actions/register.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
 
 import "./payment.styles.scss";
 
@@ -82,7 +82,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
 
 const mapStateToProps = (state) => ({
   amount: state.payment.price,
-  isLoading: state.payment.isLoading,
+  isLoading: state.loading.isLoading,
   currentUser: state.user.currentUser,
 });
 

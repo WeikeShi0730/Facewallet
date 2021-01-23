@@ -7,31 +7,29 @@ import {
   setButton,
   setStep,
   setPhoto,
-  setIsLoading,
-  setPersonId,
 } from "../../redux/actions/register.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
+import { setCurrentUser } from "../../redux/actions/user.action";
 
 import "./register-customer.styles.scss";
 
 import WebcamWindow from "../camera-window/camera-window.component";
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
-import { setCurrentUser } from "../../redux/actions/user.action";
 
 const Register = ({
   photoButton,
   step,
   photo,
   isLoading,
-  personId,
   setButton,
   setStep,
   setPhoto,
   setIsLoading,
-  setPersonId,
   setCurrentUser,
   history,
 }) => {
+  var personId;
   const [registerInfo, setRegisterInfo] = useState({
     first_name: "",
     last_name: "",
@@ -94,7 +92,7 @@ const Register = ({
       });
       const json = await response.json();
       try {
-        const personId = json.person_id;
+        personId = json.person_id;
         setCurrentUser({
           personId: personId,
           type: "customer",
@@ -134,7 +132,7 @@ const Register = ({
       type: "",
     });
   }, []);
-  
+
   useEffect(() => {
     handleSendPhoto(); // eslint-disable-next-line
   }, [photo]);
@@ -283,8 +281,7 @@ const mapStateToProps = (state) => ({
   photoButton: state.register.buttonDisabled,
   step: state.register.stepCheck,
   photo: state.register.image,
-  isLoading: state.register.isLoading,
-  personId: state.register.personId,
+  isLoading: state.loading.isLoading,
 });
 
 export default compose(
@@ -294,7 +291,6 @@ export default compose(
     setStep,
     setPhoto,
     setIsLoading,
-    setPersonId,
     setCurrentUser,
   })
 )(Register);

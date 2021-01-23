@@ -3,24 +3,15 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter, useParams } from "react-router-dom";
 
-import { setIsLoading, setPersonId } from "../../redux/actions/register.action";
-import { setCurrentCustomer } from "../../redux/actions/customer.action";
-import { setCurrentMerchant } from "../../redux/actions/merchant.action";
 import { setCurrentUser } from "../../redux/actions/user.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
 
 import "./sign-in.styles.scss";
 
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 
-const SignIn = ({
-  isLoading,
-  setIsLoading,
-  setPersonId,
-  setCurrentUser,
-  currentUser,
-  history,
-}) => {
+const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
   const [signInInfo, setSignInInfo] = useState({
     email: "",
     password: "",
@@ -35,18 +26,12 @@ const SignIn = ({
     });
   };
 
-  //const signedIn = currentUser !== null && currentUser.type === "merchant";
-
-  // setCurrentUser({
-  //   personId: "",
-  //   type: "",
-  // });
   useEffect(() => {
     setCurrentUser({
       personId: "",
       type: "",
     });
-  }, []);
+  });
 
   const { user } = useParams();
 
@@ -68,7 +53,6 @@ const SignIn = ({
       if (personId === undefined) {
         alert(json.error);
       } else {
-        setPersonId(personId);
         if (user === "customer") {
           setCurrentUser({
             personId: personId,
@@ -80,7 +64,9 @@ const SignIn = ({
             type: "merchant",
           });
         }
-        history.push(`/${user}/${personId}`);
+        history.push(
+          `/${user}/${personId}${user === "customer" ? "/profile" : ""}`
+        );
       }
     } catch (error) {
       console.log("User not found", error);
@@ -127,17 +113,13 @@ const SignIn = ({
 };
 
 const mapStateToProps = (state) => ({
-  isLoading: state.register.isLoading,
-  currentUser: state.user.currentUser,
+  isLoading: state.loading.isLoading,
 });
 
 export default compose(
   withRouter,
   connect(mapStateToProps, {
     setIsLoading,
-    setPersonId,
-    setCurrentCustomer,
-    setCurrentMerchant,
     setCurrentUser,
   })
 )(SignIn);

@@ -13,7 +13,7 @@ const MainMerchant = ({ history, currentUser }) => {
     if (signedIn) {
       history.push(`/merchant/${currentUser.personId}`);
     }
-  }, []);
+  });
 
   return (
     <div>

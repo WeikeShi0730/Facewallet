@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 
-import { setIsLoading, setPersonId } from "../../redux/actions/register.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
 
 //import "./register-merchant.styles.scss";
 
@@ -11,14 +11,7 @@ import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 import { setCurrentUser } from "../../redux/actions/user.action";
 
-const Register = ({
-  isLoading,
-  personId,
-  setIsLoading,
-  setPersonId,
-  setCurrentUser,
-  history,
-}) => {
+const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
   const [registerInfo, setRegisterInfo] = useState({
     first_name: "",
     last_name: "",
@@ -78,7 +71,7 @@ const Register = ({
       personId: "",
       type: "",
     });
-  }, []);
+  });
 
   return (
     <div className={`${isLoading ? "isLoading" : "notLoading"}`}>
@@ -156,7 +149,7 @@ const Register = ({
 };
 
 const mapStateToProps = (state) => ({
-  isLoading: state.register.isLoading,
+  isLoading: state.loading.isLoading,
   personId: state.register.personId,
 });
 
@@ -164,7 +157,6 @@ export default compose(
   withRouter,
   connect(mapStateToProps, {
     setIsLoading,
-    setPersonId,
     setCurrentUser,
   })
 )(Register);
