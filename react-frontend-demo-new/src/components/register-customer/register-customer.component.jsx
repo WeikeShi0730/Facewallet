@@ -29,7 +29,6 @@ const Register = ({
   setCurrentUser,
   history,
 }) => {
-  var personId;
   const [registerInfo, setRegisterInfo] = useState({
     first_name: "",
     last_name: "",
@@ -41,6 +40,8 @@ const Register = ({
     cvv: "",
     expire_date: "",
   });
+  const [personId, setPersonId] = useState()
+
   const handleChange = (event) => {
     const { value, name } = event.target;
     setRegisterInfo({
@@ -92,7 +93,8 @@ const Register = ({
       });
       const json = await response.json();
       try {
-        personId = json.person_id;
+        const personId = json.person_id;
+        setPersonId(personId)
         setCurrentUser({
           personId: personId,
           type: "customer",

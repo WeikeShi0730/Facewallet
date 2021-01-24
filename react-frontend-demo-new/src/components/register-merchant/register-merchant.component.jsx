@@ -71,7 +71,7 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
       personId: "",
       type: "",
     });
-  });
+  }, []);
 
   return (
     <div className={`${isLoading ? "isLoading" : "notLoading"}`}>
