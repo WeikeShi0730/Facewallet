@@ -7,9 +7,9 @@ import {
   setButton,
   setStep,
   setPhoto,
-  setIsLoading,
-  setPersonId,
 } from "../../redux/actions/register.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
+import { setCurrentUser } from "../../redux/actions/user.action";
 
 import "./register-customer.styles.scss";
 
@@ -22,14 +22,14 @@ const Register = ({
   step,
   photo,
   isLoading,
-  personId,
   setButton,
   setStep,
   setPhoto,
   setIsLoading,
-  setPersonId,
+  setCurrentUser,
   history,
 }) => {
+  var personId;
   const [registerInfo, setRegisterInfo] = useState({
     first_name: "",
     last_name: "",
@@ -91,10 +91,16 @@ const Register = ({
         info: true,
       });
       const json = await response.json();
-
-      const personId = json.person_id;
-      setPersonId(personId);
-      console.log("info regisration success!");
+      try {
+        personId = json.person_id;
+        setCurrentUser({
+          personId: personId,
+          type: "customer",
+        });
+        console.log("info regisration success!");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -102,7 +108,7 @@ const Register = ({
     if (photo !== null) {
       history.push(`/customer/register/photo/${personId}`);
       setIsLoading(true);
-      const response = await fetch(`/register/photo/${personId}`, {
+      const response = await fetch(`/api/customer/register/photo/${personId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -119,6 +125,13 @@ const Register = ({
       }
     }
   };
+
+  useEffect(() => {
+    setCurrentUser({
+      personId: "",
+      type: "",
+    });
+  }, []);
 
   useEffect(() => {
     handleSendPhoto(); // eslint-disable-next-line
@@ -268,8 +281,7 @@ const mapStateToProps = (state) => ({
   photoButton: state.register.buttonDisabled,
   step: state.register.stepCheck,
   photo: state.register.image,
-  isLoading: state.register.isLoading,
-  personId: state.register.personId,
+  isLoading: state.loading.isLoading,
 });
 
 export default compose(
@@ -279,6 +291,6 @@ export default compose(
     setStep,
     setPhoto,
     setIsLoading,
-    setPersonId,
+    setCurrentUser,
   })
 )(Register);

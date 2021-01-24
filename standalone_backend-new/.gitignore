@@ -1,3 +1,7 @@
 venv/
 .flaskenv
 cmd.sh
+__pycache__/
+azure/
+cache_payment_photo/
+cache_register_photo/

@@ -49,8 +49,10 @@ function Payment({
         body: JSON.stringify({ amount: amount, photo: photo }),
       });
       setIsLoading(false);
+      const data = await response.json();
       if (response.ok) {
         console.log("payment success!");
+        console.log(data);
       }
     }
   };

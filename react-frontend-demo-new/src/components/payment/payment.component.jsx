@@ -1,8 +1,8 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback } from "react";
 import { connect } from "react-redux";
 
-import { setAmount, setPhoto } from "../../redux/actions/payment.action";
-import { setIsLoading } from "../../redux/actions/register.action";
+import { setAmount } from "../../redux/actions/payment.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
 
 import "./payment.styles.scss";
 
@@ -10,14 +10,7 @@ import WebcamWindow from "../camera-window/camera-window.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 import FormInput from "../form-input/form-input.component";
 
-function Payment({
-  amount,
-  isLoading,
-  photo,
-  setAmount,
-  setIsLoading,
-  setPhoto,
-}) {
+function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
   const handleChange = (event) => {
     const { value } = event.target;
     setAmount(value);
@@ -25,32 +18,38 @@ function Payment({
 
   // webcam
   const webcamRef = useRef(null);
-  const handleScreenshot = useCallback(
-    (event) => {
-      event.preventDefault();
-      const imageSrc = webcamRef.current.getScreenshot();
-      setPhoto(imageSrc);
-    },
-    [webcamRef, setPhoto]
-  );
+  const handleScreenshot = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    return imageSrc;
+  }, [webcamRef]);
 
-  useEffect(() => {
-    handleSubmit(); // eslint-disable-next-line
-  }, [photo]);
-
-  const handleSubmit = async () => {
-    if (photo !== null && amount !== "") {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const imageSrc = handleScreenshot();
+    if (imageSrc !== null && amount !== "") {
       setIsLoading(true);
-      const response = await fetch(`/payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ amount: amount, photo: photo }),
-      });
+      const response = await fetch(
+        `/api/merchant/${currentUser.personId}/facepay`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount: amount, photo: imageSrc }),
+        }
+      );
       setIsLoading(false);
       if (response.ok) {
-        console.log("payment success!");
+        try {
+          const data = await response.json();
+          if (data.message === "succeed") {
+            console.log("payment success!", data);
+            //write in to db
+          }
+          alert(data.message + " " + data.person_name);
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   };
@@ -65,7 +64,7 @@ function Payment({
       </div>
       <div className="group">
         <WebcamWindow ref={webcamRef} />
-        <form className="form" onSubmit={handleScreenshot}>
+        <form className="form" onSubmit={handleSubmit}>
           <FormInput
             name="total"
             type="number"
@@ -83,12 +82,11 @@ function Payment({
 
 const mapStateToProps = (state) => ({
   amount: state.payment.price,
-  isLoading: state.payment.isLoading,
-  photo: state.payment.image,
+  isLoading: state.loading.isLoading,
+  currentUser: state.user.currentUser,
 });
 
 export default connect(mapStateToProps, {
   setAmount,
   setIsLoading,
-  setPhoto,
 })(Payment);

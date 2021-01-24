@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request, json
 import glob
 import re
 import cv2
+import numpy as np
 import base64
 from io import BytesIO, StringIO
 from PIL import Image, ImageDraw, ImageFont
@@ -14,6 +15,7 @@ from azure.cognitiveservices.vision.face.models import APIErrorException
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
                                 get_jwt_identity, get_raw_jwt)
 import hashlib
+import uuid
 import sys
 sys.path.append('.')
 
@@ -35,13 +37,35 @@ def testing():
     print(data)
     return data
 
-# To-do
-
-
 @app.route("/api/merchant/register", methods=['POST'])
 def post_merchant_info():
     data = request.form
-    return
+    if (check_merchant_form_not_none(data)):
+        # MM_todo - check person whether exist in data base instead of AI model
+        if (Merchant.query.filter(Merchant.email == data['email']).first()):
+            print("user exist")
+            return jsonify({'message': 'user already exist'}), 200
+        else:
+            merchant_id = uuid.uuid1()
+            # access_token = create_access_token(identity=data['email'])
+            # refresh_token = create_refresh_token(identity=data['email'])
+
+            merchant_info = Merchant(
+                id=merchant_id,
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                email=data['email'],
+                password=hashlib.md5(data['password'].encode()).hexdigest(),
+                #phone_number=data['phone_number'],
+                shop_name=data['shop_name'],
+            )
+            db.session.add_all([merchant_info])
+            db.session.commit()
+            return jsonify({'message': 'ok, the text info is added into db', 'person_id': merchant_id}), 200
+
+    else:
+        print("form contains None")
+        return jsonify({'message': 'require more info'}), 200
 
 
 @app.route("/api/customer/register/info", methods=['POST'])
@@ -50,7 +74,7 @@ def post_customer_info():
     print(data)
     print(type(data))
 
-    if (check_form_not_none(data)):
+    if (check_customer_form_not_none(data)):
         person_name_at_bank_acc = data['first_name'] + \
             "_" + data['last_name'] + "@" + data['card_number']
         print(person_name_at_bank_acc)
@@ -106,7 +130,7 @@ def post_photo_test():
     return jsonify({'message': 'reponse'}), 200
 
 
-@app.route("/register/photo/<person_id>", methods=['POST'])
+@app.route("/api/customer/register/photo/<person_id>", methods=['POST'])
 def post_photo(person_id=None):
     data = json.loads(request.data, strict=False)
     # print (data.get('photo'))
@@ -159,14 +183,29 @@ def post_photo(person_id=None):
     return jsonify({'message': 'reponse'}), 200
 
 
-def check_form_not_none(data):
+def check_customer_form_not_none(data):
     if (
-        data.get('first_name') is not None and
-        data.get('last_name') is not None and
-        data.get('phone_number') is not None and
-        data.get('card_number') is not None and
-        data.get('cvv') is not None and
-        data.get('expire_date') is not None and
+        data['first_name'] is not None and
+        data['last_name'] is not None and
+        data['phone_number'] is not None and
+        data['email'] is not None and
+        data['password'] is not None and
+        data['card_number'] is not None and
+        data['cvv'] is not None and
+        data['expire_date'] is not None and
+        True  # dummy value to keep format
+    ):
+        return True
+    else:
+        return False
+
+def check_merchant_form_not_none(data):
+    if (
+        data['first_name'] is not None and
+        data['last_name'] is not None and
+        data['email'] is not None and
+        data['password'] is not None and
+        data['shop_name'] is not None and
         True  # dummy value to keep format
     ):
         return True
@@ -174,8 +213,8 @@ def check_form_not_none(data):
         return False
 
 
-@app.route("/payment", methods=['POST'])
-def payment_photo():
+@app.route("/api/merchant/<person_id>/facepay", methods=['POST'])
+def payment_photo(person_id=None):
     data = json.loads(request.data, strict=False)
     # print (data.get('photo'))
     print(type(data))
@@ -245,7 +284,7 @@ def payment_photo():
 
                     # MM_todo query database, return user all info
                     # MM_todo set confidence threholds, check payment_cnt
-                    return jsonify({'message': 'succeed', 'person_id': first_person_id, 'require_phone_number': 0, 'confidence': first_person_confidence}), 200
+                    return jsonify({'message': 'succeed', 'person_id': first_person_id, 'person_name': first_person_name, 'require_phone_number': 0, 'confidence': first_person_confidence}), 200
     return jsonify({'message': 'reponse'}), 200
 
 
@@ -255,6 +294,27 @@ def customer_signin():
         email = request.form["email"]
         password = request.form["password"]
         current_user = Customer.query.filter(Customer.email == email).first()
+        if not current_user:
+            return {"error": "User not in DB. Register as a new user"}
+
+        password = hashlib.md5(password.encode()).hexdigest()    
+        if current_user.password == password:
+            access_token = create_access_token(identity=email)
+            refresh_token = create_refresh_token(identity=email)
+            return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id}), 200
+
+        else:
+            return {'error': 'Wrong credentials'}
+    except:
+        raise Exception("Cannot login user")
+
+
+@app.route("/api/merchant/signin", methods=['POST'])
+def merchant_signin():
+    try:
+        email = request.form["email"]
+        password = request.form["password"]
+        current_user = Merchant.query.filter(Merchant.email == email).first()
         if not current_user:
             return {"error": "User not in DB. Register as a new user"}
 

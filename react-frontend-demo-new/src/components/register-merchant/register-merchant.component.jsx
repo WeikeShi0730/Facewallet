@@ -1,22 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 
-import { setIsLoading, setPersonId } from "../../redux/actions/register.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
 
 //import "./register-merchant.styles.scss";
 
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
+import { setCurrentUser } from "../../redux/actions/user.action";
 
-const Register = ({
-  isLoading,
-  personId,
-  setIsLoading,
-  setPersonId,
-  history,
-}) => {
+const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
   const [registerInfo, setRegisterInfo] = useState({
     first_name: "",
     last_name: "",
@@ -49,22 +44,34 @@ const Register = ({
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
-    const response = await fetch("api/merchant/register/", {
+    const response = await fetch("/api/merchant/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: formData,
     });
     console.log(registerInfo);
     setIsLoading(false);
     if (response.ok) {
       const json = await response.json();
-      const personId = json.person_id;
-      setPersonId(personId);
-      console.log("info regisration success!");
+      try {
+        const personId = json.person_id;
+        setCurrentUser({
+          personId: personId,
+          type: "merchant",
+        });
+        console.log("info regisration success!");
+        history.push(`/merchant/${personId}`);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+
+  useEffect(() => {
+    setCurrentUser({
+      personId: "",
+      type: "",
+    });
+  });
 
   return (
     <div className={`${isLoading ? "isLoading" : "notLoading"}`}>
@@ -142,7 +149,7 @@ const Register = ({
 };
 
 const mapStateToProps = (state) => ({
-  isLoading: state.register.isLoading,
+  isLoading: state.loading.isLoading,
   personId: state.register.personId,
 });
 
@@ -150,6 +157,6 @@ export default compose(
   withRouter,
   connect(mapStateToProps, {
     setIsLoading,
-    setPersonId,
+    setCurrentUser,
   })
 )(Register);

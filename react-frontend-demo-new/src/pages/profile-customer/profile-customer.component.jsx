@@ -1,14 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 
 //import "./hompage.styles.scss";
 
 const ProfileCustomer = ({ currentUser }) => {
-
-  
-
-
-  return <div>{currentUser}</div>;
+  const signedIn = currentUser !== null && currentUser.type === "customer";
+  return (
+    <div>{signedIn ? <div>{currentUser.personId}</div> : <div></div>}</div>
+  );
 };
 
 const mapStateToProps = (state) => ({

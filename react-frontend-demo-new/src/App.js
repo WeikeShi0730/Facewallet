@@ -24,7 +24,11 @@ function App() {
         <Route exact path="/" component={Homepage} />
         <Route exact path="/customer" component={MainCustomer} />
         <Route exact path="/merchant" component={MainMerchant} />
-        <Route exact path="/customer/:customerId/profile" component={ProfileCustomer} />
+        <Route
+          exact
+          path="/customer/:customerId/profile"
+          component={ProfileCustomer}
+        />
         <Route
           exact
           path="/merchant/:merchantId/profile"

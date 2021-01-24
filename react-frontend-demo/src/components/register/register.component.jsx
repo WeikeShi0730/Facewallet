@@ -95,12 +95,14 @@ const Register = ({
       });
       console.log(JSON.stringify({ photo: photo }));
       setIsLoading(false);
+      const data = await response.json();
       if (response.ok) {
         setStep({
           ...step,
           photo: true,
         });
         console.log("photo regisration success!");
+        console.log(data);
       }
     }
   };

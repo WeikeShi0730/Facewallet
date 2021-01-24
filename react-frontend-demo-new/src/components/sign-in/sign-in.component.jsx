@@ -1,25 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter, useParams } from "react-router-dom";
 
-import { setIsLoading, setPersonId } from "../../redux/actions/register.action";
-import { setCurrentCustomer } from "../../redux/actions/customer.action";
-import { setCurrentMerchant } from "../../redux/actions/merchant.action";
 import { setCurrentUser } from "../../redux/actions/user.action";
+import { setIsLoading } from "../../redux/actions/loading.action";
 
 import "./sign-in.styles.scss";
 
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-buttom/custom-button.component";
 
-const SignIn = ({
-  isLoading,
-  setIsLoading,
-  setPersonId,
-  setCurrentUser,
-  history,
-}) => {
+const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
   const [signInInfo, setSignInInfo] = useState({
     email: "",
     password: "",
@@ -33,6 +25,13 @@ const SignIn = ({
       [name]: value,
     });
   };
+
+  useEffect(() => {
+    setCurrentUser({
+      personId: "",
+      type: "",
+    });
+  });
 
   const { user } = useParams();
 
@@ -49,23 +48,28 @@ const SignIn = ({
     });
     setIsLoading(false);
     const json = await response.json();
-    const personId = json.person_id;
-    if (personId === undefined) {
-      alert(json.error);
-    } else {
-      setPersonId(personId);
-      if (user === "customer") {
-        setCurrentUser({
-          personId: personId,
-          type: "customer",
-        });
+    try {
+      const personId = json.person_id;
+      if (personId === undefined) {
+        alert(json.error);
       } else {
-        setCurrentUser({
-          personId: personId,
-          type: "merchant",
-        });
+        if (user === "customer") {
+          setCurrentUser({
+            personId: personId,
+            type: "customer",
+          });
+        } else {
+          setCurrentUser({
+            personId: personId,
+            type: "merchant",
+          });
+        }
+        history.push(
+          `/${user}/${personId}${user === "customer" ? "/profile" : ""}`
+        );
       }
-      history.push(`/${user}/${personId}/profile`);
+    } catch (error) {
+      console.log("User not found", error);
     }
   };
 
@@ -109,16 +113,13 @@ const SignIn = ({
 };
 
 const mapStateToProps = (state) => ({
-  isLoading: state.register.isLoading,
+  isLoading: state.loading.isLoading,
 });
 
 export default compose(
   withRouter,
   connect(mapStateToProps, {
     setIsLoading,
-    setPersonId,
-    setCurrentCustomer,
-    setCurrentMerchant,
     setCurrentUser,
   })
 )(SignIn);
