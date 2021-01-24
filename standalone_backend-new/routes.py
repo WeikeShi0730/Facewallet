@@ -1,23 +1,19 @@
-from azure.register import *
-from azure.utils import *
 from flask import Flask, jsonify, request, json
 import glob
 import re
-import cv2
-import numpy as np
 import base64
 from io import BytesIO, StringIO
-from PIL import Image, ImageDraw, ImageFont
-from main import app, face_client, db
 from forms import *
 from database import *
-from azure.cognitiveservices.vision.face.models import APIErrorException
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
                                 get_jwt_identity, get_raw_jwt)
 import hashlib
 import uuid
 import sys
 sys.path.append('.')
+from register import *
+from Aws_functions import *
+from main import app,db, Collection_id, client
 
 
 @app.route("/")
@@ -27,8 +23,8 @@ def homepage():
 
 @app.route("/list")
 def list_person():
-    list_out_person(face_client)
-    return "list printed in terminal"
+    faces_count=list_faces_in_collection(Collection_id)
+    print("faces count: " + str(faces_count))
 
 
 @app.route("/testing", methods=['POST'])
@@ -71,7 +67,7 @@ def post_merchant_info():
 @app.route("/api/customer/register/info", methods=['POST'])
 def post_customer_info():
     data = request.form
-    print(data)
+    #print(data)
     print(type(data))
 
     if (check_customer_form_not_none(data)):
@@ -79,14 +75,13 @@ def post_customer_info():
             "_" + data['last_name'] + "@" + data['card_number']
         print(person_name_at_bank_acc)
         # MM_todo - check person whether exist in data base instead of AI model
-        if (check_person_exist(face_client, person_name_at_bank_acc)):
+        if (check_person_existence(data)):
             print("user exist")
             return jsonify({'message': 'user already exist', 'name@bank': person_name_at_bank_acc}), 200
         else:
-            person_id = create_person(face_client, person_name_at_bank_acc)
-            if person_id is None:
-                return jsonify({'message': 'AI model can not create a person'}), 200
-            print(person_id)
+            person_id = data['first_name'] + "_" + data['last_name'] + "_" + data['phone_number']
+            
+            print('Person id created :',person_id,'\n')
             # because 2nd time called this, we dont have the id, we need to store it frist
 
             # access_token = create_access_token(identity=data['email'])
@@ -143,45 +138,19 @@ def post_photo(person_id=None):
         print(image_type)
         if (image_type != "data:image/jpeg;base64"):
             return jsonify({'message': 'the image is not a jpeg type'}), 200
-        # print (type(image_content))
-        # print (type(base64.b64decode(image_content)))
-        nparr = np.fromstring(base64.b64decode(image_content), np.uint8)
-        # print (type(nparr))
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        # print (type(img))
-        # cv2.imshow('img',img)
-        cv2.imwrite(constant.REG_PHOTO_FOLDER +
-                    '{person_id_name}.jpg'.format(person_id_name=person_id), img)
-        file_p = open(constant.REG_PHOTO_FOLDER +
-                      '{person_id_name}.jpg'.format(person_id_name=person_id), 'r+b')
-        # when we add face, we can also add the name@bank as the argument
-        # PersistedFace_id = face_client.person_group_person.add_face_from_stream(constant.PERSON_GROUP_ID, person_id, image_content, name="ma@123")
+
         try:
-            response_info = face_client.person_group_person.add_face_from_stream(
-                constant.PERSON_GROUP_ID, person_id, file_p)  # , name="ma@123")
-            print(response_info)
+            aws_respose = add_faces_to_collection(image_content,person_id,Collection_id)
+            user= Customer.query.get(person_id)
+            print ('user info:',user,'\n')
+            user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
+            db.session.commit()
+            print (user.aws_id)
         except APIErrorException:
-            print("no face is detected")
-            return jsonify({'message': "no face is detected"}), 200
-        train_person_group(face_client)
-        # try:
-        #    train_person_group(face_client)
-        # except:
-        #    print ("training not succeed")
-        #    return jsonify({'message': "training not succeed"}),200
-
-        if (constant.KEEP_CACHE_PHOTO == 0):
-            try:
-                os.remove(constant.REG_PHOTO_FOLDER +
-                          '{person_id_name}.jpg'.format(person_id_name=person_id))
-                print("photo is removed")
-            except PermissionError:
-                print("delete photo permission denied")
-
-        return jsonify({'message': 'photo is added'}), 200
-
-    return jsonify({'message': 'reponse'}), 200
-
+            print ("no face is detected")
+            return jsonify({'message': "no face is detected"}),200
+            
+        return jsonify({'message': 'photo is added'}),200
 
 def check_customer_form_not_none(data):
     if (
