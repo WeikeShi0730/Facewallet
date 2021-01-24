@@ -1,3 +1,4 @@
+# file not used for now
 PERSON_GROUP_ID = 'standalone_backend'
 RECOGNITION_MODEL = 'recognition_03'
 KEEP_CACHE_PHOTO = 0

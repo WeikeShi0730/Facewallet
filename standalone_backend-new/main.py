@@ -11,19 +11,13 @@ import uuid
 import requests
 from urllib.parse import urlparse
 from io import BytesIO
-from PIL import Image, ImageDraw
-from azure.cognitiveservices.vision.face import FaceClient
-from msrest.authentication import CognitiveServicesCredentials
-from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person, SnapshotObjectType, OperationStatusType
 from flask_jwt_extended import JWTManager
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 sys.path.append('.')
-from azure.utils import *
-from azure.register import *
-
+import boto3
 import constant
 
 app = Flask("__main__")
@@ -34,15 +28,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 jwt=JWTManager(app)
 db=SQLAlchemy(app)
 
-AZURE_KEY = os.environ['FACE_SUBSCRIPTION_KEY']
-AZURE_ENDPOINT = os.environ['FACE_ENDPOINT']
+Region = os.environ['REGION_NAME']
+Aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
+Aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
+Collection_id = os.environ['COLLECTION_ID']
 
-face_client = FaceClient(AZURE_ENDPOINT, CognitiveServicesCredentials(AZURE_KEY))
+client = boto3.client('rekognition', region_name=Region, aws_access_key_id=Aws_access_key_id, aws_secret_access_key=Aws_secret_access_key)
 
-PERSON_GROUP_ID = constant.PERSON_GROUP_ID
-#TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anything)
-#delete_person_group(face_client,PERSON_GROUP_ID)
-create_person_group(face_client,PERSON_GROUP_ID)
+
 
 from routes import *
 from database import *
