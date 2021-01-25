@@ -193,67 +193,20 @@ def payment_photo(person_id=None):
         print(image_type)
         if (image_type != "data:image/jpeg;base64"):
             return jsonify({'message': 'the image is not a jpeg type'}), 200
-        nparr = np.fromstring(base64.b64decode(image_content), np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        cv2.imwrite(constant.PAY_PHOTO_FOLDER +
-                    '{person_id_name}.jpg'.format(person_id_name="temp"), img)
-        file_p = open(constant.PAY_PHOTO_FOLDER +
-                      '{person_id_name}.jpg'.format(person_id_name="temp"), 'r+b')
-        # Detect faces
-        face_ids = []
         try:
-            faces = face_client.face.detect_with_stream(
-                file_p, recognition_model=constant.RECOGNITION_MODEL)
-        except APIErrorException:
-            print("detect failure")
-            return jsonify({'message': "detect failure"}), 200
-
-        for face in faces:
-            face_ids.append(face.face_id)
-            print('face ID in faces {}.\n'.format(face.face_id))
-        if (len(face_ids) == 0):
-            print("No face detected in this verify image")
-            return jsonify({'message': "No face detected in this verify image"}), 200
-        elif (len(faces) > 1):
-            print(
-                "More than 1 faces detected in this verify image. Please retake the photo")
-            return jsonify({'message': "More than 1 faces detected in this verify image. Please retake the photo"}), 200
-        else:
-            try:
-                results = face_client.face.identify(
-                    face_ids, constant.PERSON_GROUP_ID)
-            except APIErrorException:
-                print("identify failure, possibly person group not train")
-                return jsonify({'message': "identify failure, possibly person group not train"}), 200
-
-            if not results:
-                print('No person in AI database matched with this verification')
-                return jsonify({'message': "No person in AI database matched with this verification"}), 200
+            faceMatches=search_face_in_collection(image_content,Collection_id)
+            if not faceMatches:
+                print ('no matched faces')
+                return jsonify({'message': "no matched faces"}),200
             else:
-                # should be only 1 face
-                first_face = results[0]
-                first_candidates = first_face.candidates[0]
-                print("test")
-                print(first_face)
-                print(type(first_face))
-                print(first_candidates)
-                print(type(first_candidates))
-                if (len(first_face.candidates) == 0):
-                    print(
-                        'No candidates person in this database matched with this verification')
-                    return jsonify({'message': "No candidates person in this database matched with this verification"}), 200
-                else:
-                    first_person_id = first_candidates.person_id
-                    first_person_confidence = first_candidates.confidence
-                    first_person_name = face_client.person_group_person.get(
-                        constant.PERSON_GROUP_ID, first_candidates.person_id).name
-                    print('Person name {} with person_id {} matched with this cerification with a confidence of {}.'.format(
-                        first_person_name, first_person_id, first_person_confidence))
-
-                    # MM_todo query database, return user all info
-                    # MM_todo set confidence threholds, check payment_cnt
-                    return jsonify({'message': 'succeed', 'person_id': first_person_id, 'person_name': first_person_name, 'require_phone_number': 0, 'confidence': first_person_confidence}), 200
-    return jsonify({'message': 'reponse'}), 200
+                print ('Matching faces')
+                for match in faceMatches:
+                        print ('FaceId:' + match['Face']['FaceId'])
+                        print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
+                return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity']}),200
+        except:
+           print ("detect failure")
+           return jsonify({'message': "detect failure"}),200
 
 
 @app.route("/api/customer/signin", methods=['POST'])
