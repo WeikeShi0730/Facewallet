@@ -46,7 +46,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
             console.log("payment success!", data);
             //write in to db
           }
-          alert(data.message + " " + data.person_name);
+          alert(data.message + " " + data.person_id);
         } catch (error) {
           console.log(error);
         }

@@ -210,7 +210,7 @@ const Register = ({
               type="email"
               handleChange={handleChange}
               value={email}
-              label="Eamil"
+              label="Email"
               required
             />
             <FormInput
