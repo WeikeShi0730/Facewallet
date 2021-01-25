@@ -2,6 +2,7 @@ from database import Customer,Merchant
 import glob
 import time
 import constant
+import uuid
 
 #modified for AWS
 def check_person_existence(data):
@@ -14,6 +15,14 @@ def check_person_existence(data):
         return True
     else:
         return False
+
+def generate_id():
+    id = uuid.uuid4()
+    existing_C = Customer.query.filter(Customer.id == id ).first()
+    existing_M = Merchant.query.filter(Customer.id == id ).first()
+
+    return id if existing_C or existing_M else generate_id()
+
 #not used for AWS
 def create_person(client,person_name_at_bank_acc,PERSON_GROUP_ID=constant.PERSON_GROUP_ID):
     new_person = client.person_group_person.create(PERSON_GROUP_ID, name=person_name_at_bank_acc)

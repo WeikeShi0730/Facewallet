@@ -8,7 +8,6 @@ from database import *
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
                                 get_jwt_identity, get_raw_jwt)
 import hashlib
-import uuid
 import sys
 sys.path.append('.')
 from register import *
@@ -42,7 +41,7 @@ def post_merchant_info():
             print("user exist")
             return jsonify({'message': 'user already exist'}), 200
         else:
-            merchant_id = uuid.uuid1()
+            merchant_id = generate_id()
             # access_token = create_access_token(identity=data['email'])
             # refresh_token = create_refresh_token(identity=data['email'])
 
@@ -79,7 +78,7 @@ def post_customer_info():
             print("user exist")
             return jsonify({'message': 'user already exist', 'name@bank': person_name_at_bank_acc}), 200
         else:
-            person_id = data['first_name'] + "_" + data['last_name'] + "_" + data['phone_number']
+            person_id = generate_id()
             
             print('Person id created :',person_id,'\n')
             # because 2nd time called this, we dont have the id, we need to store it frist
@@ -146,7 +145,7 @@ def post_photo(person_id=None):
             user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
             db.session.commit()
             print (user.aws_id)
-        except APIErrorException:
+        except:
             print ("no face is detected")
             return jsonify({'message': "no face is detected"}),200
             
