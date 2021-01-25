@@ -31,7 +31,7 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
       personId: "",
       type: "",
     });
-  });
+  }, []);
 
   const { user } = useParams();
 
