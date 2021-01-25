@@ -37,7 +37,7 @@ def post_merchant_info():
     data = request.form
     if (check_merchant_form_not_none(data)):
         # MM_todo - check person whether exist in data base instead of AI model
-        if (Merchant.query.filter(Merchant.email == data['email']).first()):
+        if (check_person_existence_M(data)):
             print("user exist")
             return jsonify({'message': 'user already exist'}), 200
         else:
@@ -72,11 +72,11 @@ def post_customer_info():
     if (check_customer_form_not_none(data)):
         person_name_at_bank_acc = data['first_name'] + \
             "_" + data['last_name'] + "@" + data['card_number']
-        print(person_name_at_bank_acc)
+        print('person try to register:',person_name_at_bank_acc,'\n')
         # MM_todo - check person whether exist in data base instead of AI model
-        if (check_person_existence(data)):
+        if (check_person_existence_C(data)):
             print("user exist")
-            return jsonify({'message': 'user already exist', 'name@bank': person_name_at_bank_acc}), 200
+            return jsonify({'message': 'user already exist'}), 200
         else:
             person_id = generate_id()
             

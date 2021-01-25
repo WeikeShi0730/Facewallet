@@ -5,7 +5,7 @@ import constant
 import uuid
 
 #modified for AWS
-def check_person_existence(data):
+def check_person_existence_C(data):
     existing = Customer.query.filter(Customer.first_name ==data['first_name'], 
     Customer.last_name==data['last_name'],
     Customer.card_number==data['card_number']).first()
@@ -16,6 +16,17 @@ def check_person_existence(data):
     else:
         return False
 
+def check_person_existence_M(data):
+    existing = Merchant.query.filter(Customer.first_name ==data['first_name'], 
+    Merchant.last_name==data['last_name'],
+    Merchant.email==data['email'],
+    Merchant.shop_name==data['shop_name']).first()
+
+    if existing != None:
+        print(existing.id)
+        return True
+    else:
+        return False
 def generate_id():
     id = uuid.uuid4()
     existing_C = Customer.query.filter(Customer.id == id ).first()
