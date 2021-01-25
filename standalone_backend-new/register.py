@@ -28,11 +28,11 @@ def check_person_existence_M(data):
     else:
         return False
 def generate_id():
-    id = uuid.uuid4()
+    id = str(uuid.uuid4())
     existing_C = Customer.query.filter(Customer.id == id ).first()
     existing_M = Merchant.query.filter(Customer.id == id ).first()
 
-    return id if existing_C or existing_M else generate_id()
+    return id if (existing_C == None or existing_M == None) else generate_id()
 
 #not used for AWS
 def create_person(client,person_name_at_bank_acc,PERSON_GROUP_ID=constant.PERSON_GROUP_ID):

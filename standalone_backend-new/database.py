@@ -15,7 +15,7 @@ from main import app, db
 
 class Customer(db.Model):
     # 定以表名
-    __tablename__ = 'customer'
+    __tablename__ = 'Customers'
     # 定以字段
     # db.Column表示一个字段
 
@@ -31,10 +31,10 @@ class Customer(db.Model):
     expire_date = db.Column(db.String(10), nullable=False)
     payment_cnt = db.Column(db.Integer(), nullable=True)
     reg_image_cnt = db.Column(db.Integer(), nullable=True)
-
+    #transactions = db.relationship('Transaction')
 class Merchant(db.Model):
     # 定以表名
-    __tablename__ = 'merchant'
+    __tablename__ = 'Merchants'
     # 定以字段
     # db.Column表示一个字段
 
@@ -46,6 +46,7 @@ class Merchant(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), unique=False, nullable=False)
     shop_name = db.Column(db.String(50), unique=False, nullable=False)
+    #transactions = db.relationship('Transaction')
 
 class Transaction(db.Model):
 

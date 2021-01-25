@@ -14,7 +14,6 @@ from register import *
 from Aws_functions import *
 from main import app,db, Collection_id, client
 
-
 @app.route("/")
 def homepage():
     return "Homepage for sanity"
@@ -127,9 +126,10 @@ def post_photo_test():
 @app.route("/api/customer/register/photo/<person_id>", methods=['POST'])
 def post_photo(person_id=None):
     data = json.loads(request.data, strict=False)
-    # print (data.get('photo'))
-    print(type(data))
-    if (person_id == None or data.get('photo') == None or person_id == "undefined"):
+    #print (data.get('photo'),'\n')
+    print('data tpye of photo',type(data),'\n')
+    print('id:',person_id,'\n')
+    if (person_id == None or data['photo'] == None or person_id == "undefined"):
         return jsonify({'message': 'person_id not returned to the backend neither the photo'}), 200
     else:
         print("got person id" + person_id)
@@ -203,7 +203,8 @@ def payment_photo(person_id=None):
                 for match in faceMatches:
                         print ('FaceId:' + match['Face']['FaceId'])
                         print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
-                return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity']}),200
+                return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
+                                'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity']}),200
         except:
            print ("detect failure")
            return jsonify({'message': "detect failure"}),200
