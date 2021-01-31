@@ -40,22 +40,9 @@ const Register = ({
     cvv: "",
     expire_date: "",
   });
-  const [personId, setPersonId] = useState()
-
-  const handleChange = (event) => {
-    const { value, name } = event.target;
-    setRegisterInfo({
-      ...registerInfo,
-      [name]: value,
-    });
-  };
-
-  // webcam
-  const webcamRef = useRef(null);
-  const handleScreenshot = useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setPhoto(imageSrc);
-  }, [webcamRef, setPhoto]);
+  const [personId, setPersonId] = useState();
+  const [pwd, setPwd] = useState(false);
+  const [match, setMatch] = useState(false);
 
   const {
     first_name,
@@ -69,10 +56,54 @@ const Register = ({
     expire_date,
   } = registerInfo;
 
+  const handleChange = (event) => {
+    const { value, name } = event.target;
+    setRegisterInfo({
+      ...registerInfo,
+      [name]: value,
+    });
+    if (name === "password" || name === "confirm_password") {
+      checkPassword(event);
+      checkPasswordMatch();
+    }
+  };
+  const checkPassword = (event) => {
+    var pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+    if (event.target.value.match(pattern)) {
+      setPwd(true);
+    } else {
+      setPwd(false);
+    }
+  };
+  const checkPasswordMatch = () => {
+    const password = document.getElementById("password").value;
+    const confirm_password = document.getElementById("confirm_password").value;
+    if (password !== undefined && password !== null && password !== "") {
+      if (password === confirm_password) {
+        setMatch(true);
+      } else {
+        setMatch(false);
+      }
+    } else {
+      setMatch(false);
+    }
+  };
+
+  // webcam
+  const webcamRef = useRef(null);
+  const handleScreenshot = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setPhoto(imageSrc);
+  }, [webcamRef, setPhoto]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (password !== confirm_password) {
+    if (match === false) {
       alert("Passwords do not match");
+      return;
+    }
+    if (pwd === false) {
+      alert("Password issue");
       return;
     }
     history.push("/customer/register/info");
@@ -94,7 +125,7 @@ const Register = ({
       const json = await response.json();
       try {
         const personId = json.person_id;
-        setPersonId(personId)
+        setPersonId(personId);
         setCurrentUser({
           personId: personId,
           type: "customer",
@@ -132,7 +163,7 @@ const Register = ({
     setCurrentUser({
       personId: "",
       type: "",
-    });
+    }); // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -163,7 +194,7 @@ const Register = ({
       setStep({ info: false, photo: false });
       setButton(true);
       setPhoto(null);
-    }
+    } // eslint-disable-next-line
   }, [step, setButton, setRegisterInfo, setStep, setPhoto]);
 
   return (
@@ -175,7 +206,7 @@ const Register = ({
         <div></div>
       </div>
 
-      <div className="register">
+      <div className="register-customer">
         <div className="form-submit">
           <form className="form" onSubmit={handleSubmit}>
             <FormInput
@@ -202,9 +233,10 @@ const Register = ({
               value={phone_number}
               label="Phone Number"
               pattern="\d*"
+              minLength="10"
+              maxLength="11"
               required
             />
-
             <FormInput
               name="email"
               type="email"
@@ -214,22 +246,38 @@ const Register = ({
               required
             />
             <FormInput
+              id="password"
               name="password"
               type="password"
               handleChange={handleChange}
               value={password}
               label="Password"
+              minLength="8"
+              maxLength="15"
               required
             />
+            <div className="notice">
+              <span className={`dot ${pwd ? "true" : ""}`}></span>
+              <span>
+                Should contain 8-15 characters, including lowercase letters,
+                uppercase letters, digits and special symbols.
+              </span>
+            </div>
             <FormInput
+              id="confirm_password"
               name="confirm_password"
               type="password"
               handleChange={handleChange}
               value={confirm_password}
               label="Confirm Password"
+              minLength="8"
+              maxLength="15"
               required
             />
-
+            <div className="notice">
+              <span className={`dot ${match ? "true" : ""}`}></span>
+              <span>Password Match</span>
+            </div>
             <FormInput
               name="card_number"
               type="text"
@@ -238,6 +286,7 @@ const Register = ({
               label="Card Number"
               pattern="\d*"
               maxLength="16"
+              minLength="16"
               required
             />
 
@@ -248,6 +297,7 @@ const Register = ({
               value={cvv}
               label="CVV (3 Digits)"
               pattern="\d*"
+              minLength="3"
               maxLength="3"
               required
             />

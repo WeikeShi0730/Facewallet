@@ -30,7 +30,7 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     setCurrentUser({
       personId: "",
       type: "",
-    });
+    }); // eslint-disable-next-line
   }, []);
 
   const { user } = useParams();
@@ -82,7 +82,7 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
         <div></div>
       </div>
 
-      <div className="register">
+      <div className="signin">
         <div className="form-submit">
           <form className="form" onSubmit={handleSubmit}>
             <FormInput
