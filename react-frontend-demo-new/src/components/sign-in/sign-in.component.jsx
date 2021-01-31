@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter, useParams } from "react-router-dom";
+import { useToasts } from "react-toast-notifications";
 
 import { setCurrentUser } from "../../redux/actions/user.action";
 import { setIsLoading } from "../../redux/actions/loading.action";
@@ -16,6 +17,7 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     email: "",
     password: "",
   });
+  const { addToast } = useToasts();
 
   const { email, password } = signInInfo;
   const handleChange = (event) => {
@@ -69,6 +71,10 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
         );
       }
     } catch (error) {
+      addToast(error, {
+        appearance: "error",
+        autoDismiss: true,
+      });
       console.log("User not found", error);
     }
   };

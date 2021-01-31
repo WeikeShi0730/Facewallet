@@ -1,5 +1,6 @@
 import React, { useRef, useCallback } from "react";
 import { connect } from "react-redux";
+import { useToasts } from 'react-toast-notifications'
 
 import { setAmount } from "../../redux/actions/payment.action";
 import { setIsLoading } from "../../redux/actions/loading.action";

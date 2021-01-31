@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
+import { useToasts } from "react-toast-notifications";
 
 import {
   setButton,
@@ -43,6 +44,7 @@ const Register = ({
   const [personId, setPersonId] = useState();
   const [pwd, setPwd] = useState(false);
   const [match, setMatch] = useState(false);
+  const { addToast } = useToasts();
 
   const {
     first_name,
@@ -99,11 +101,17 @@ const Register = ({
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (match === false) {
-      alert("Passwords do not match");
+      addToast("Passwords do not match", {
+        appearance: "error",
+        autoDismiss: true,
+      });
       return;
     }
     if (pwd === false) {
-      alert("Password issue");
+      addToast("Passwords issue", {
+        appearance: "error",
+        autoDismiss: true,
+      });
       return;
     }
     history.push("/customer/register/info");
@@ -130,9 +138,16 @@ const Register = ({
           personId: personId,
           type: "customer",
         });
-        console.log("info regisration success!");
+        addToast(json.message, {
+          appearance: json.level,
+          autoDismiss: true,
+        });
       } catch (error) {
         console.log(error);
+        addToast(error, {
+          appearance: json.level,
+          autoDismiss: true,
+        });
       }
     }
   };
@@ -154,7 +169,19 @@ const Register = ({
           ...step,
           photo: true,
         });
-        console.log("photo regisration success!");
+        const json = await response.json();
+        try {
+          addToast(json.message, {
+            appearance: "success",
+            autoDismiss: true,
+          });
+        } catch (error) {
+          console.log(error);
+          addToast(error, {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        }
       }
     }
   };
@@ -178,7 +205,6 @@ const Register = ({
     }
 
     if (info && photo) {
-      alert("Regisration is done!");
       history.push(`/customer/${personId}/profile`); //to profile page
       setRegisterInfo({
         first_name: "",

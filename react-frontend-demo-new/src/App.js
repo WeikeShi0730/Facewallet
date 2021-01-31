@@ -1,5 +1,6 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
+import { ToastProvider } from "react-toast-notifications";
 
 import { GlobalStyle } from "./global.styles";
 
@@ -20,30 +21,40 @@ function App() {
     <div>
       <GlobalStyle />
       <Header />
-      <Switch>
-        <Route exact path="/" component={Homepage} />
-        <Route exact path="/customer" component={MainCustomer} />
-        <Route exact path="/merchant" component={MainMerchant} />
-        <Route
-          exact
-          path="/customer/:customerId/profile"
-          component={ProfileCustomer}
-        />
-        <Route
-          exact
-          path="/merchant/:merchantId/profile"
-          component={ProfileMerchant}
-        />
-        <Route path="/customer/register" component={RegisterCustomer} />
-        <Route exact path="/merchant/register" component={RegisterMerchant} />
-        <Route exact path="/user=:user/signin" component={SignInPage} />
-        <Route
-          exact
-          path="/merchant/:merchantId"
-          component={SignedInMerchant}
-        />
-        <Route exact path="/merchant/:merchantId/payment" component={Payment} />
-      </Switch>
+      <ToastProvider
+        autoDismiss
+        autoDismissTimeout={6000}
+        placement="top-center"
+      >
+        <Switch>
+          <Route exact path="/" component={Homepage} />
+          <Route exact path="/customer" component={MainCustomer} />
+          <Route exact path="/merchant" component={MainMerchant} />
+          <Route
+            exact
+            path="/customer/:customerId/profile"
+            component={ProfileCustomer}
+          />
+          <Route
+            exact
+            path="/merchant/:merchantId/profile"
+            component={ProfileMerchant}
+          />
+          <Route path="/customer/register" component={RegisterCustomer} />
+          <Route exact path="/merchant/register" component={RegisterMerchant} />
+          <Route exact path="/user=:user/signin" component={SignInPage} />
+          <Route
+            exact
+            path="/merchant/:merchantId"
+            component={SignedInMerchant}
+          />
+          <Route
+            exact
+            path="/merchant/:merchantId/payment"
+            component={Payment}
+          />
+        </Switch>
+      </ToastProvider>
     </div>
   );
 }
