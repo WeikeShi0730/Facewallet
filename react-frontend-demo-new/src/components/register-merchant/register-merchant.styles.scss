@@ -1,0 +1,22 @@
+.register-merchant {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  .notice {
+    font-size: 10px;
+    width: 25vw;
+    margin-top: -15px;
+    .dot {
+      margin-right: 3px;
+      height: 10px;
+      width: 10px;
+      background-color: red;
+      border-radius: 50%;
+      display: inline-block;
+      &.true {
+        background-color: green;
+      }
+    }
+  }
+}
