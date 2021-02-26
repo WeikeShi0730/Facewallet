@@ -44,7 +44,11 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     for (let field in signInInfo) {
       formData.append(field, signInInfo[field]);
     }
+<<<<<<< HEAD
     const response = await fetch(`/api/${user}/signin`, {
+=======
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/${user}/signin`, {
+>>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
       method: "POST",
       body: formData,
     });

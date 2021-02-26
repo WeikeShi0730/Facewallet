@@ -12,6 +12,8 @@ import requests
 from urllib.parse import urlparse
 from io import BytesIO
 from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
+from flask_cors import CORS
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -20,9 +22,11 @@ sys.path.append('.')
 import boto3
 import constant
 
-app = Flask("__main__")
+load_dotenv()
+app = Flask(__name__)
+CORS(app)
 app.config['JWT_SECRET_KEY'] = 'boost-is-the-secret-of-our-app'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 jwt=JWTManager(app)

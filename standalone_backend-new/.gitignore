@@ -1,7 +1,16 @@
 venv/
+<<<<<<< HEAD
 .flaskenv
+=======
+>>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
 cmd.sh
 __pycache__/
 azure/
 cache_payment_photo/
+<<<<<<< HEAD
 cache_register_photo/
+=======
+cache_register_photo/
+.env
+.flaskenv
+>>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
