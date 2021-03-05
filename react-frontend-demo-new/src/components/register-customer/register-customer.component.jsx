@@ -156,11 +156,7 @@ const Register = ({
     if (photo !== null) {
       history.push(`/customer/register/photo/${personId}`);
       setIsLoading(true);
-<<<<<<< HEAD
-      const response = await fetch(`/api/customer/register/photo/${personId}`, {
-=======
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/customer/register/photo/${personId}`, {
->>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
         method: "POST",
         headers: {
           "Content-Type": "application/json",
