@@ -22,13 +22,6 @@
     "styled-components": "^5.2.0"
   },
   "scripts": {
-<<<<<<< HEAD
-    "start": "react-scripts start",
-    "start-backend": "cd ../flask-backend-demo && flask run --no-debugger",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-=======
     "dev": "react-scripts start",
     "start": "serve -s build",
     "start-backend": "cd ../flask-backend-demo && flask run --no-debugger",
@@ -36,7 +29,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build"
->>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
   },
   "eslintConfig": {
     "extends": "react-app"

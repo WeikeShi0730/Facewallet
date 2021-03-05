@@ -30,11 +30,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
     if (imageSrc !== null && amount !== "") {
       setIsLoading(true);
       const response = await fetch(
-<<<<<<< HEAD
-        `/api/merchant/${currentUser.personId}/facepay`,
-=======
         `${process.env.REACT_APP_BACKEND_URL}/api/merchant/${currentUser.personId}/facepay`,
->>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
         {
           method: "POST",
           headers: {

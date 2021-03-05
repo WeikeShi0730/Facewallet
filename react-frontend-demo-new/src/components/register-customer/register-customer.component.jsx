@@ -120,11 +120,7 @@ const Register = ({
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
-<<<<<<< HEAD
-    const response = await fetch("/api/customer/register/info", {
-=======
     const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/customer/register/info`, {
->>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
       method: "POST",
       body: formData,
     });

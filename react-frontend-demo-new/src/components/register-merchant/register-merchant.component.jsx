@@ -71,11 +71,7 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
-<<<<<<< HEAD
-    const response = await fetch("/api/merchant/register", {
-=======
     const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/merchant/register`, {
->>>>>>> de518a04e2220ee5d65f1da6d822cbf0db356520
       method: "POST",
       body: formData,
     });
