@@ -1,14 +1,23 @@
 .header {
-  font-size: 50px;
-  display: block;
-  text-align: center;
   padding: 10px 15px;
-  cursor: pointer;
+  position: relative;
   @media screen and (max-width: 1200px) {
     padding: 5px;
   }
-  
+
   .link-text {
-    text-decoration: none;
+    font-size: 25px;
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    text-decoration: underline;
+  }
+
+  .title {
+    font-size: 50px;
+    display: block;
+    text-align: center;
   }
 }

@@ -7,8 +7,9 @@ const Header = () => {
   return (
     <div className="header">
       <Link className="link-text" to="/">
-        Facewallet
+        {`< Home`}
       </Link>
+      <h3 className="title">FaceWallet</h3>
     </div>
   );
 };
