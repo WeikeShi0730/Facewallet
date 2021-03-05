@@ -38,7 +38,7 @@ def post_merchant_info():
         # MM_todo - check person whether exist in data base instead of AI model
         if (check_person_existence_M(data)):
             print("user exist")
-            return jsonify({'message': 'user already exist'}), 200
+            return jsonify({'message': 'user already exist','level':'error'}), 200
         else:
             merchant_id = generate_id()
             # access_token = create_access_token(identity=data['email'])
@@ -55,11 +55,11 @@ def post_merchant_info():
             )
             db.session.add_all([merchant_info])
             db.session.commit()
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': merchant_id}), 200
+            return jsonify({'message': 'ok, the text info is added into db', 'person_id': merchant_id,'level':'info'}), 200
 
     else:
         print("form contains None")
-        return jsonify({'message': 'require more info'}), 200
+        return jsonify({'message': 'Error: require more info','level':'error'}), 200
 
 
 @app.route("/api/customer/register/info", methods=['POST'])
@@ -75,7 +75,7 @@ def post_customer_info():
         # MM_todo - check person whether exist in data base instead of AI model
         if (check_person_existence_C(data)):
             print("user exist")
-            return jsonify({'message': 'user already exist'}), 200
+            return jsonify({'message': 'user already exist', 'level':'error'}), 200
         else:
             person_id = generate_id()
             
@@ -100,11 +100,11 @@ def post_customer_info():
             db.session.add_all([customer_info])
             db.session.commit()
 
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': person_id}), 200
+            return jsonify({'message': 'ok, the text info is added into db', 'person_id': person_id,'level':'info'}), 200
 
     else:
         print("form contains None")
-        return jsonify({'message': 'require more info'}), 200
+        return jsonify({'message': 'Error: require more info','level':'error'}), 200
 
 
 @app.route("/register/photo/test", methods=['POST'])
@@ -130,13 +130,13 @@ def post_photo(person_id=None):
     print('data tpye of photo',type(data),'\n')
     print('id:',person_id,'\n')
     if (person_id == None or data['photo'] == None or person_id == "undefined"):
-        return jsonify({'message': 'person_id not returned to the backend neither the photo'}), 200
+        return jsonify({'message': 'person_id not returned to the backend neither the photo','level':'error'}), 200
     else:
         print("got person id" + person_id)
         [image_type, image_content] = re.split(",", data['photo'])
         print(image_type)
         if (image_type != "data:image/jpeg;base64"):
-            return jsonify({'message': 'the image is not a jpeg type'}), 200
+            return jsonify({'message': 'the image is not a jpeg type','level':'warning'}), 200
 
         try:
             aws_respose = add_faces_to_collection(image_content,person_id,Collection_id)
@@ -145,11 +145,11 @@ def post_photo(person_id=None):
             user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
             db.session.commit()
             print (user.aws_id)
-        except:
-            print ("no face is detected")
-            return jsonify({'message': "no face is detected"}),200
+        except IndexError:
+            print ("Error: no face is detected in the image")
+            return jsonify({'message': 'no face is detected','level':'error'}),200
             
-        return jsonify({'message': 'photo is added'}),200
+        return jsonify({'message': 'photo is added','level': 'success'}),200
 
 def check_customer_form_not_none(data):
     if (
@@ -187,17 +187,17 @@ def payment_photo(person_id=None):
     # print (data.get('photo'))
     print(type(data))
     if (data.get('photo') == None):
-        return jsonify({'message': 'the photo not returned to the backend '}), 200
+        return jsonify({'message': 'Error: the photo not returned to the backend ','level':'error'}), 200
     else:
         [image_type, image_content] = re.split(",", data['photo'])
         print(image_type)
         if (image_type != "data:image/jpeg;base64"):
-            return jsonify({'message': 'the image is not a jpeg type'}), 200
+            return jsonify({'message': 'Error: the image is not a jpeg type','level':'warning'}), 200
         try:
             faceMatches=search_face_in_collection(image_content,Collection_id)
             if not faceMatches:
                 print ('no matched faces')
-                return jsonify({'message': "no matched faces"}),200
+                return jsonify({'message': "no record faces in the input image",'level':'warning'}),200
             else:
                 print ('Matching faces')
                 for match in faceMatches:
@@ -207,7 +207,7 @@ def payment_photo(person_id=None):
                                 'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity']}),200
         except:
            print ("detect failure")
-           return jsonify({'message': "detect failure"}),200
+           return jsonify({'message': "detect failure, unexpected error",'level':'error'}),200
 
 
 @app.route("/api/customer/signin", methods=['POST'])
@@ -217,16 +217,16 @@ def customer_signin():
         password = request.form["password"]
         current_user = Customer.query.filter(Customer.email == email).first()
         if not current_user:
-            return {"error": "User not in DB. Register as a new user"}
+            return {'message': 'User not in DB. Register as a new user','level':'error'}
 
         password = hashlib.md5(password.encode()).hexdigest()    
         if current_user.password == password:
             access_token = create_access_token(identity=email)
             refresh_token = create_refresh_token(identity=email)
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id}), 200
+            return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id,'level':'error'}), 200
 
         else:
-            return {'error': 'Wrong credentials'}
+            return {'message': 'Wrong credentials','level':'error'}
     except:
         raise Exception("Cannot login user")
 
@@ -238,15 +238,15 @@ def merchant_signin():
         password = request.form["password"]
         current_user = Merchant.query.filter(Merchant.email == email).first()
         if not current_user:
-            return {"error": "User not in DB. Register as a new user"}
+            return {'message': 'User not in DB. Register as a new user','level':'error'}
 
         password = hashlib.md5(password.encode()).hexdigest()    
         if current_user.password == password:
             access_token = create_access_token(identity=email)
             refresh_token = create_refresh_token(identity=email)
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id}), 200
+            return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id,'level':'info'}), 200
 
         else:
-            return {'error': 'Wrong credentials'}
+            return {'message': 'Wrong credentials','level':'error'}
     except:
         raise Exception("Cannot login user")
