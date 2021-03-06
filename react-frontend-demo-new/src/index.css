@@ -4,11 +4,18 @@
     url("./assets/Formula1-Regular_web_0.ttf") format("opentype"),
     url("./assets/Formula1-Regular_web_0.ttf") format("truetype");
 }
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color:#C5C6C7;
+
+  /* background: linear-gradient(to bottom right, #2195DE, #DE6A21) no-repeat center center fixed; */
+  background: url(assets/antelope.png) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 code {
