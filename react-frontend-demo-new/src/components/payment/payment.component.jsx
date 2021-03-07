@@ -1,6 +1,6 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { connect } from "react-redux";
-import { useToasts } from 'react-toast-notifications'
+import { useToasts } from "react-toast-notifications";
 
 import { setAmount } from "../../redux/actions/payment.action";
 import { setIsLoading } from "../../redux/actions/loading.action";
@@ -12,6 +12,8 @@ import CustomButton from "../custom-buttom/custom-button.component";
 import FormInput from "../form-input/form-input.component";
 
 function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
+  const { addToast } = useToasts();
+  const [wobble, setWobble] = useState(0);
   const handleChange = (event) => {
     const { value } = event.target;
     setAmount(value);
@@ -41,15 +43,26 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
       );
       setIsLoading(false);
       if (response.ok) {
+        const json = await response.json();
         try {
-          const data = await response.json();
-          if (data.message === "succeed") {
-            console.log("payment success!", data);
-            //write in to db
+          if (json.message === "succeed") {
+            console.log("payment success!", json);
+            // Checkmark animation timeout
+            setWobble(1);
+            setTimeout(() => {
+              setWobble(0);
+            }, 2500);
           }
-          alert(data.message + " " + data.person_id);
+          addToast(json.message + " " + json.person_id, {
+            appearance: json.level,
+            autoDismiss: true,
+          });
         } catch (error) {
           console.log(error);
+          addToast(error.message, {
+            appearance: json.level,
+            autoDismiss: true,
+          });
         }
       }
     }
@@ -63,6 +76,28 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
         <div></div>
         <div></div>
       </div>
+
+      <div className={`${wobble === 1 ? "mark" : ""}`}>
+        <svg
+          className={`${wobble === 1 ? "checkmark" : "uncheckmark"}`}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 52 52"
+        >
+          <circle
+            className={`${wobble === 1 ? "checkmark__circle" : ""}`}
+            cx="50%"
+            cy="50%"
+            r="25"
+            fill="none"
+          />
+          <path
+            className={`${wobble === 1 ? "checkmark__check" : ""}`}
+            fill="none"
+            d="M14.1 27.2l7.1 7.2 16.7-16.8"
+          />
+        </svg>
+      </div>
+
       <div className="group">
         <WebcamWindow ref={webcamRef} />
         <form className="form" onSubmit={handleSubmit}>
