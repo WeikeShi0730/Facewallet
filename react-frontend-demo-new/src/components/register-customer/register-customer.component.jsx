@@ -40,6 +40,7 @@ const Register = ({
     card_number: "",
     cvv: "",
     expire_date: "",
+    secondary: false,
   });
   const [personId, setPersonId] = useState();
   const [pwd, setPwd] = useState(false);
@@ -56,10 +57,13 @@ const Register = ({
     card_number,
     cvv,
     expire_date,
+    secondary,
   } = registerInfo;
 
   const handleChange = (event) => {
-    const { value, name } = event.target;
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
     setRegisterInfo({
       ...registerInfo,
       [name]: value,
@@ -117,13 +121,17 @@ const Register = ({
     history.push("/customer/register/info");
     setIsLoading(true);
     let formData = new FormData();
+    console.log(registerInfo)
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/customer/register/info`, {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/customer/register/info`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
     setIsLoading(false);
     if (response.ok) {
       setStep({
@@ -156,13 +164,16 @@ const Register = ({
     if (photo !== null) {
       history.push(`/customer/register/photo/${personId}`);
       setIsLoading(true);
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/customer/register/photo/${personId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ photo: photo }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/customer/register/photo/${personId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ photo: photo }),
+        }
+      );
       setIsLoading(false);
       if (response.ok) {
         setStep({
@@ -216,6 +227,7 @@ const Register = ({
         card_number: "",
         cvv: "",
         expire_date: "",
+        secondary: false,
       });
       setStep({ info: false, photo: false });
       setButton(true);
@@ -336,6 +348,16 @@ const Register = ({
               label="Expire Date"
               required
             />
+            <label style={{ color: "antiquewhite" }}>
+              <input
+                name="secondary"
+                type="checkbox"
+                onChange={handleChange}
+                checked={secondary}
+              />
+              Enable Secondary Verification (Will always be asked to provide
+              phone number when paying)
+            </label>
 
             <CustomButton type="submit" disable={false}>
               Confirm
