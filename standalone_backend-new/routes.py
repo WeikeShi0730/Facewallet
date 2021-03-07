@@ -204,7 +204,7 @@ def payment_photo(person_id=None):
                         print ('FaceId:' + match['Face']['FaceId'])
                         print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
                 return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
-                                'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity']}),200
+                                'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity'], 'level':'success'}),200
         except:
            print ("detect failure")
            return jsonify({'message': "detect failure, unexpected error",'level':'error'}),200
