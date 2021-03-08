@@ -59,6 +59,6 @@ class Transaction(db.Model):
    date_time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
    amount = db.Column(db.Float, nullable = False)
    customer_id = db.Column(db.String(50), db.ForeignKey('Customers.id'))
-   Merchant_id = db.Column(db.String(50), db.ForeignKey('Merchants.id'))
+   merchant_id = db.Column(db.String(50), db.ForeignKey('Merchants.id'))
    customer = db.relationship(Customer)
    merchant = db.relationship(Merchant)

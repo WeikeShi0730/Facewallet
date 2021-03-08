@@ -197,17 +197,37 @@ def payment_photo(person_id=None):
             faceMatches=search_face_in_collection(image_content,Collection_id)
             if not faceMatches:
                 print ('no matched faces')
-                return jsonify({'message': "no record faces in the input image",'level':'warning'}),200
+                return jsonify({'message': 'no record faces in the input image','level':'warning'}),200
             else:
                 print ('Matching faces')
+                
                 for match in faceMatches:
                         print ('FaceId:' + match['Face']['FaceId'])
-                        print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
-                return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
-                                'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity'], 'level':'success'}),200
+                        print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")]
+                if len(faceMatches)>1:
+                    print("Identical faces found")
+                    return jsonify({'message':'Secondary verification needed','level':'warning'})
+                else:
+                    cus_id = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first().id
+                    mer_id = person_id
+                    amount = float(data.get('amount'))
+                    New_transaction = Transaction(
+                        amount = amount,
+                        customer_id = cus_id,
+                        Merchant_id = mer_id
+                        )
+                    db.session.add_all([New_transaction])
+                    user = Customer.query.get(cus_id)
+                    user.balance += amount
+                    user = Merchant.query.get(mer_id)
+                    user.balance -= amount
+                    db.session.commit()
+                    
+                    return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
+                                    'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity'], 'level':'success'}),200
         except:
            print ("detect failure")
-           return jsonify({'message': "detect failure, unexpected error",'level':'error'}),200
+           return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
 
 
 @app.route("/api/customer/signin", methods=['POST'])
@@ -226,9 +246,16 @@ def customer_signin():
             return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id,'level':'error'}), 200
 
         else:
-            return {'message': 'Wrong credentials','level':'error'}
+            return jsonify({'message': 'Wrong credentials','level':'error'})
     except:
         raise Exception("Cannot login user")
+
+@app.route("/api/customer/<person_id>/profile", methods=['POST'])
+def customer_profile(person_id=None):
+
+    record = Transaction.query.filter(Transaction.customer_id == person_id).first()
+    print(record)
+    return jsonify({'level':'success','transaction record': record})
 
 
 @app.route("/api/merchant/signin", methods=['POST'])
@@ -247,6 +274,12 @@ def merchant_signin():
             return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id,'level':'info'}), 200
 
         else:
-            return {'message': 'Wrong credentials','level':'error'}
+            return jsonify({'message': 'Wrong credentials','level':'error'})
     except:
         raise Exception("Cannot login user")
+
+@app.route("/api/merchant/<person_id>/profile", methods=['POST'])
+def merchant_profile(person_id=None):
+    record = Transaction.query.filter(Transaction.merchant_id == person_id).first()
+    print(record)
+    return jsonify({'level':'success','transaction record': record})
