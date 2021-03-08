@@ -44,9 +44,9 @@ client = boto3.client('rekognition', region_name=Region, aws_access_key_id=Aws_a
 from routes import *
 from database import *
 # 删除表
-db.drop_all()
+#db.drop_all()
 # 创建表
-db.create_all()
+#db.create_all()
 # 添加用户
 #customer1=Customer(id='400065323',first_name='Bohui',last_name='Yu',phone_number='6479365120',card_number='1234123412341234',cvv='123',expire_date='0922')
 # customer2=Customer(id='400050636',first_name='Weike',last_name='Shi',phone_number='647936666',card_number='1234123412341234',cvv='456',expire_date='0922')
