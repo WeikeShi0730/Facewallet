@@ -70,6 +70,7 @@ $curve: cubic-bezier(0.65, 0, 0.45, 1);
 }
 
 .mark {
+  background: none;
   display: block;
   top: 50%;
   left: 50%;
@@ -79,7 +80,7 @@ $curve: cubic-bezier(0.65, 0, 0.45, 1);
 }
 
 .checkmark {
-  height: 500px;
+  height: 325px;
   border-radius: 50%;
   stroke-width: 2;
   stroke: #fff;
