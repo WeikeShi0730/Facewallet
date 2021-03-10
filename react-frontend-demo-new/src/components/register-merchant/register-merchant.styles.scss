@@ -1,12 +1,11 @@
 .register-merchant {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   .notice {
     font-size: 10px;
-    width: 25vw;
-    margin-top: -15px;
+    width: 100%;
     .dot {
       margin-right: 3px;
       height: 10px;

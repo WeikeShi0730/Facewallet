@@ -67,37 +67,47 @@
   flex-flow: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 80px;
-
+  margin: auto;
+  @media screen and (max-width: 1200px) {
+    display: inline-block;
+  }
   .capture-window {
     margin-right: 15%;
-    .webcam-window {
-      float: right;
+    @media screen and (max-width: 1200px) {
+      margin: auto;
     }
 
+    .webcam {
+      margin: auto;
+    }
     .capture-button {
       display: block;
       margin: auto;
+      @media screen and (max-width: 1200px) {
+        display: flex;
+        justify-content: center;
+      }
     }
   }
 
   .form-submit {
+    display: inline-block;
     margin-left: 15%;
-
+    @media screen and (max-width: 1200px) {
+      margin: 0 30px 0 30px;
+    }
     .form {
       float: left;
-
       .notice {
         font-size: 10px;
-        width: 25vw;
-        margin-top: -15px;
+        width: 100%;
         .dot {
+          display: inline-block;
           margin-right: 3px;
           height: 10px;
           width: 10px;
           background-color: red;
           border-radius: 50%;
-          display: inline-block;
           &.true {
             background-color: green;
           }

@@ -6,12 +6,11 @@
   }
 
   .link-text {
+    display: block;
     font-size: 25px;
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    margin: 15px;
+
+    
     text-decoration: none;
   }
 
