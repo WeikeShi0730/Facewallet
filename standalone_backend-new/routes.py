@@ -203,7 +203,7 @@ def payment_photo(person_id=None):
                 
                 for match in faceMatches:
                         print ('FaceId:' + match['Face']['FaceId'])
-                        print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")]
+                        print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
                 if len(faceMatches)>1:
                     print("Identical faces found")
                     return jsonify({'message':'Secondary verification needed','level':'warning'})
