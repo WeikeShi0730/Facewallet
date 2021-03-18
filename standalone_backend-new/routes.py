@@ -23,7 +23,39 @@ def homepage():
 def list_person():
     faces_count=list_faces_in_collection(Collection_id)
     print("faces count: " + str(faces_count))
+    return 'print on terminal'
 
+@app.route("/test_db/transaction")
+def test_db_transaction():
+    record = Transaction.query.filter(Transaction.customer_id == '1234567890').first()
+    # record = Transaction.query.all()
+    print(record)
+    print(record.trans_id)
+    print(record.amount)
+    print(record.customer_id)
+    print(record.merchant_id)
+    return 'Transaction table okay'
+
+@app.route("/test_db/customer")
+def test_db_customer():
+    record = Customer.query.filter(Customer.id == '1234567890').first()
+    # record = Transaction.query.all()
+    print(record)
+    print(record.card_number)
+    print(record.balance)
+    print(record.phone_number)
+    print(record.sec_verify)
+    return 'customer table okay'
+
+@app.route("/test_db/merchant")
+def test_db_merchant():
+    record = Merchant.query.filter(Merchant.id == '1234567890').first()
+    # record = Transaction.query.all()
+    print(record)
+    print(record.shop_name)
+    print(record.balance)
+    print(record.first_name)
+    return 'merchant table okay'
 
 @app.route("/testing", methods=['POST'])
 def testing():
@@ -110,7 +142,6 @@ def post_customer_info():
         return jsonify({'message': 'Error: require more info','level':'error'}), 200
 
 
-@app.route("/register/photo/test", methods=['POST'])
 def post_photo_test():
     data = json.loads(request.data, strict=False)
     # print (data)
@@ -268,18 +299,6 @@ def customer_profile(person_id=None):
     record = Transaction.query.filter(Transaction.customer_id == person_id).first()
     print(record)
     return jsonify({'level':'success','transaction record': record})
-
-@app.route("/api/customer/test/profile")
-def test_profile(person_id=None):
-    record = Transaction.query.filter(Transaction.customer_id == '1234567890').first()
-    # record = Transaction.query.all()
-    print(record)
-    print(record.trans_id)
-    print(record.amount)
-    print(record.customer_id)
-    print(record.merchant_id)
-    return 'okay'
-    # return jsonify({'level':'success','transaction record': record})
 
 @app.route("/api/merchant/signin", methods=['POST'])
 def merchant_signin():
