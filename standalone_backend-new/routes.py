@@ -257,6 +257,11 @@ def customer_profile(person_id=None):
     print(record)
     return jsonify({'level':'success','transaction record': record})
 
+@app.route("/api/customer/test/profile")
+def test_profile(person_id=None):
+    record = Transaction.query.all()
+    print(record)
+    return jsonify({'level':'success','transaction record': record})
 
 @app.route("/api/merchant/signin", methods=['POST'])
 def merchant_signin():
