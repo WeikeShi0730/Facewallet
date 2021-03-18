@@ -208,16 +208,21 @@ def payment_photo(person_id=None):
                         print ('FaceId:' + match['Face']['FaceId'])
                         print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
                 if len(faceMatches)>1:
+                # if False:
                     print("Identical faces found")
                     return jsonify({'message':'Secondary verification needed','level':'warning'})
                 else:
+                    print ("FaceId")
+                    print (faceMatches[0]['Face']['FaceId'])
                     cus_id = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first().id
+                    print ("cus_id")
+                    print (cus_id)
                     mer_id = person_id
                     amount = float(data.get('amount'))
                     New_transaction = Transaction(
                         amount = amount,
                         customer_id = cus_id,
-                        Merchant_id = mer_id
+                        merchant_id = mer_id
                         )
                     db.session.add_all([New_transaction])
                     customer_user = Customer.query.get(cus_id)
@@ -225,6 +230,10 @@ def payment_photo(person_id=None):
                     merchant_user = Merchant.query.get(mer_id)
                     merchant_user.balance -= amount
                     db.session.commit()
+                    print ("merchant_user:")
+                    print (merchant_user.balance)
+                    print ("cust_user:")
+                    print (customer_user.balance)
                     
                     return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
                                     'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity'], 'level':'success'}),200
