@@ -49,7 +49,6 @@ if ("amazonaws" not in db_url):
     db.drop_all()
     # 创建表
     db.create_all()
-    print ("dummy print to preserve if statement")
     customer1=Customer(
         id='1234567890',
         first_name='test',
@@ -80,6 +79,8 @@ if ("amazonaws" not in db_url):
     )
     db.session.add_all([customer1,merchant1,transaction1])
     db.session.commit()
+    print ("init db is okay")
+    print ("dummy print to preserve if statement")
     
 
 

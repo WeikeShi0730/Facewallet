@@ -271,9 +271,15 @@ def customer_profile(person_id=None):
 
 @app.route("/api/customer/test/profile")
 def test_profile(person_id=None):
-    record = Transaction.query.all()
+    record = Transaction.query.filter(Transaction.customer_id == '1234567890').first()
+    # record = Transaction.query.all()
     print(record)
-    return jsonify({'level':'success','transaction record': record})
+    print(record.trans_id)
+    print(record.amount)
+    print(record.customer_id)
+    print(record.merchant_id)
+    return 'okay'
+    # return jsonify({'level':'success','transaction record': record})
 
 @app.route("/api/merchant/signin", methods=['POST'])
 def merchant_signin():
