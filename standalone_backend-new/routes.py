@@ -96,7 +96,7 @@ def post_customer_info():
                 card_number=data['card_number'],
                 cvv=data['cvv'],
                 expire_date=data['expire_date'],
-                sec_verify = data['secondary']=='true',
+                sec_verify = data['secondary']=='false',
                 balance = 100
                 # MM_todo - register payment cnt intialize t0 0
             )
@@ -220,10 +220,10 @@ def payment_photo(person_id=None):
                         Merchant_id = mer_id
                         )
                     db.session.add_all([New_transaction])
-                    user = Customer.query.get(cus_id)
-                    user.balance += amount
-                    user = Merchant.query.get(mer_id)
-                    user.balance -= amount
+                    customer_user = Customer.query.get(cus_id)
+                    customer_user.balance += amount
+                    merchant_user = Merchant.query.get(mer_id)
+                    merchant_user.balance -= amount
                     db.session.commit()
                     
                     return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
