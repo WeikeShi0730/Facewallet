@@ -43,7 +43,10 @@ const Register = ({
     secondary: false,
   });
   const [personId, setPersonId] = useState();
-  const [pwd, setPwd] = useState(false);
+
+  // dev
+  //const [pwd, setPwd] = useState(false);
+  const [pwd, setPwd] = useState(true);
   const [match, setMatch] = useState(false);
   const { addToast } = useToasts();
 
@@ -69,7 +72,7 @@ const Register = ({
       [name]: value,
     });
     if (name === "password" || name === "confirm_password") {
-      checkPassword(event);
+      //checkPassword(event);
       checkPasswordMatch();
     }
   };
@@ -271,8 +274,8 @@ const Register = ({
               value={phone_number}
               label="Phone Number"
               pattern="\d*"
-              minLength="10"
-              maxLength="11"
+              //minLength="10"
+              //maxLength="11"
               required
             />
             <FormInput
@@ -290,8 +293,8 @@ const Register = ({
               handleChange={handleChange}
               value={password}
               label="Password"
-              minLength="8"
-              maxLength="15"
+              //minLength="8"
+              //maxLength="15"
               required
             />
             <div className="notice">
@@ -308,8 +311,8 @@ const Register = ({
               handleChange={handleChange}
               value={confirm_password}
               label="Confirm Password"
-              minLength="8"
-              maxLength="15"
+              //minLength="8"
+              //maxLength="15"
               required
             />
             <div className="notice">
@@ -323,8 +326,8 @@ const Register = ({
               value={card_number}
               label="Card Number"
               pattern="\d*"
-              maxLength="16"
-              minLength="16"
+              //maxLength="16"
+              //minLength="16"
               required
             />
 

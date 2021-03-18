@@ -29,7 +29,9 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     confirm_password,
   } = registerInfo;
 
-  const [pwd, setPwd] = useState(false);
+  // dev
+  //const [pwd, setPwd] = useState(false);
+  const [pwd, setPwd] = useState(true);
   const [match, setMatch] = useState(false);
 
   const handleChange = (event) => {
@@ -39,7 +41,7 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
       [name]: value,
     });
     if (name === "password" || name === "confirm_password") {
-      checkPassword(event);
+      //checkPassword(event);
       checkPasswordMatch();
     }
   };
@@ -154,8 +156,8 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
               handleChange={handleChange}
               value={password}
               label="Password"
-              minLength="8"
-              maxLength="15"
+              //minLength="8"
+              //maxLength="15"
               required
             />
             <div className="notice">
@@ -172,8 +174,8 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
               handleChange={handleChange}
               value={confirm_password}
               label="Confirm Password"
-              minLength="8"
-              maxLength="15"
+              //minLength="8"
+              //maxLength="15"
               required
             />
             <div className="notice">
