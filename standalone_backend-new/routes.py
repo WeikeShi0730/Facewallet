@@ -52,6 +52,7 @@ def post_merchant_info():
                 password=hashlib.md5(data['password'].encode()).hexdigest(),
                 #phone_number=data['phone_number'],
                 shop_name=data['shop_name'],
+                balance = 100
             )
             db.session.add_all([merchant_info])
             db.session.commit()
@@ -94,7 +95,9 @@ def post_customer_info():
                 phone_number=data['phone_number'],
                 card_number=data['card_number'],
                 cvv=data['cvv'],
-                expire_date=data['expire_date']
+                expire_date=data['expire_date'],
+                sec_verify = data['secondary']=='true',
+                balance = 100
                 # MM_todo - register payment cnt intialize t0 0
             )
             db.session.add_all([customer_info])

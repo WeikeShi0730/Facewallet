@@ -31,8 +31,8 @@ class Customer(db.Model):
     expire_date = db.Column(db.String(10), nullable=False)
     payment_cnt = db.Column(db.Integer(), nullable=True)
     reg_image_cnt = db.Column(db.Integer(), nullable=True)
-    sec_verify = db.Column(db.Boolean(), nullable=False,default=True)
-    balance = db.Column(db.Float(),nullable=False,default=100.0)
+    sec_verify = db.Column(db.Boolean(), nullable=False)
+    balance = db.Column(db.Float(),nullable=False)
     #transactions = db.relationship('Transaction')
 class Merchant(db.Model):
     # 定以表名
@@ -48,14 +48,14 @@ class Merchant(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), unique=False, nullable=False)
     shop_name = db.Column(db.String(50), unique=False, nullable=False)
-    balance = db.Column(db.Float(),nullable=False,default=100.0)
+    balance = db.Column(db.Float(),nullable=False)
     #transactions = db.relationship('Transaction')
 
 class Transaction(db.Model):
 
    __tablename__ = 'Transaction'
    
-   trans_id = db.Column(db.String(50),primary_key=True,autoincrement=True)
+   trans_id = db.Column(db.String(50),primary_key=True)#,autoincrement=True
    date_time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
    amount = db.Column(db.Float, nullable = False)
    customer_id = db.Column(db.String(50), db.ForeignKey('Customers.id'))
