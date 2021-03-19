@@ -56,7 +56,7 @@ class Transaction(db.Model):
 
    __tablename__ = 'Transaction'
    
-   trans_id = db.Column(db.String(50),primary_key=True)#,autoincrement=True
+   trans_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
    date_time = db.Column(db.DateTime, default=datetime.datetime.utcnow)
    amount = db.Column(db.Float, nullable = False)
    customer_id = db.Column(db.String(50), db.ForeignKey('Customers.id'))

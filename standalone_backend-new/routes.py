@@ -263,7 +263,7 @@ def payment_photo(person_id=None):
                     mer_id = person_id
                     amount = float(data.get('amount'))
                     New_transaction = Transaction(
-                        trans_id = random.randint(0,100),
+                        # trans_id = random.randint(0,100),
                         amount = amount,
                         customer_id = cus_id,
                         merchant_id = mer_id
@@ -322,6 +322,7 @@ def pre_jsonify_transaction(db_obj):
     output_dict['amount'] = db_obj.amount
     output_dict['customer_id'] = db_obj.customer_id
     output_dict['merchant_id'] = db_obj.merchant_id
+    # output_dict['row_id'] = db_obj.id
     return output_dict
 
 def cust_handle_db_transaction(db_obj):

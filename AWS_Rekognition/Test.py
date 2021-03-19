@@ -203,9 +203,9 @@ def main():
     ###本地读取图片
     #photo = 'C:/capstone/Facewallet_fork/AWS_Rekognition/obama.jpg'
 
-    create_collection(collection_id)
-    collection_count=list_collections()
-    print("collections: " + str(collection_count))
+    # create_collection(collection_id)
+    # collection_count=list_collections()
+    # print("collections: " + str(collection_count))
 
     '''
     ###display  collection info
@@ -213,9 +213,13 @@ def main():
     describe_collection(collection_id)
     '''
 
-    # ###delete collection
-    # status_code=delete_collection(collection_id)
-    # print('Status code: ' + str(status_code))
+    ###delete collection
+    status_code=delete_collection(collection_id)
+    print('Status code: ' + str(status_code))
+
+    create_collection(collection_id)
+    collection_count=list_collections()
+    print("collections: " + str(collection_count))
 
     '''
     ###add face to collection

@@ -72,13 +72,13 @@ if ("amazonaws" not in db_url):
     #     balance = 100
     # )
     # transaction1 = Transaction(
-    #     trans_id = 1,
+    #     # trans_id = 1,
     #     amount = 12,
     #     customer_id = '1234567890',
     #     merchant_id = '1234567890'
     # )
     # transaction2 = Transaction(
-    #     trans_id = 2,
+    #     # trans_id = 2,
     #     amount = 34,
     #     customer_id = '1234567890',
     #     merchant_id = '1234567890'
