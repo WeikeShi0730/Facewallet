@@ -311,7 +311,7 @@ def pre_jsonify_transaction(db_obj):
     output_dict['merchant_id'] = db_obj.merchant_id
     return output_dict
 
-def handle_db_transaction(db_obj):
+def mer_handle_db_transaction(db_obj):
 
     multi_dict = dict()
     trans_dict = dict()
@@ -322,9 +322,37 @@ def handle_db_transaction(db_obj):
 
         #query shop name
         merchant_id = trans_dict[dictionary]['merchant_id']
-        shop_name = Merchant.query.filter(Merchant.id == merchant_id).first().shop_name
-        shop_dict = {'shop_name' : shop_name}
-        trans_dict[dictionary].update(shop_dict)
+        merchant_info = Merchant.query.filter(Merchant.id == merchant_id).first()
+        mer_list =dict()
+        mer_list['Merchant'] = pre_jsonify_merchant(merchant_info)
+        # shop_name = Merchant.query.filter(Merchant.id == merchant_id).first().shop_name
+        # shop_dict = {'shop_name' : shop_name}
+        trans_dict[dictionary].update(mer_list)
+
+        # print ('in func')
+        # print (trans_dict[dictionary])
+        multi_dict.update(trans_dict)
+        # print (multi_dict)
+        cnt += 1
+    trans_dict = multi_dict
+
+    return trans_dict
+
+def cust_handle_db_transaction(db_obj):
+
+    multi_dict = dict()
+    trans_dict = dict()
+    cnt=1
+    for instant in db_obj:
+        dictionary = 'Transaction_instance_'+str(cnt)
+        trans_dict[dictionary] = pre_jsonify_transaction(instant)
+
+        #query customer
+        customer_id = trans_dict[dictionary]['customer_id']
+        customer_info = Customer.query.filter(Customer.id == customer_id).first()
+        cust_list =dict()
+        cust_list['Customer'] = pre_jsonify_customer(customer_info)
+        trans_dict[dictionary].update(cust_list)
 
         # print ('in func')
         # print (trans_dict[dictionary])
@@ -353,6 +381,19 @@ def pre_jsonify_customer(db_obj):
     output_dict['balance'] = db_obj.balance
     return output_dict
 
+def pre_jsonify_merchant(db_obj):
+    output_dict = dict()
+    output_dict['id'] = db_obj.id
+    output_dict['aws_id'] = db_obj.aws_id
+    output_dict['first_name'] = db_obj.first_name
+    output_dict['last_name'] = db_obj.last_name
+    # output_dict['phone_number'] = db_obj.phone_number
+    # output_dict['email'] = db_obj.email
+    # output_dict['password'] = db_obj.phone_numbpassworder
+    output_dict['shop_name'] = db_obj.shop_name
+    output_dict['balance'] = db_obj.balance
+    return output_dict
+
 # @app.route("/api/customer/<person_id>/profile", methods=['POST'])
 @app.route("/api/customer/<person_id>/profile", methods=['GET'])
 def customer_profile(person_id=None):
@@ -365,7 +406,7 @@ def customer_profile(person_id=None):
     # for col in record:
     #     print(col)
     trans_list = dict()
-    trans_list['Transaction'] = handle_db_transaction(record)
+    trans_list['Transaction'] = mer_handle_db_transaction(record)
     # print(trans_list)
 
     cust_list = dict()
@@ -403,6 +444,26 @@ def merchant_signin():
 
 @app.route("/api/merchant/<person_id>/profile", methods=['GET'])
 def merchant_profile(person_id=None):
-    record = Transaction.query.filter(Transaction.merchant_id == person_id).first()
-    print(record)
-    return jsonify({'level':'success','transaction record': record})
+    
+    record = Transaction.query.filter(Transaction.merchant_id == person_id).all()
+    print(type(record))
+    print(len(record))
+    # print(record[0].amount)
+    # print(record[1].amount)
+    # for col in record:
+    #     print(col)
+    trans_list = dict()
+    trans_list['Transaction'] = cust_handle_db_transaction(record)
+    # print(trans_list)
+
+    mer_list = dict()
+    merchant_info = Merchant.query.filter(Merchant.id == person_id).first()
+    mer_list['Merchant'] = pre_jsonify_merchant(merchant_info)
+    # print(mer_list)
+
+    full_json = dict()
+    full_json.update(trans_list)
+    full_json.update(mer_list)
+    # print(full_json)
+
+    return jsonify(full_json)

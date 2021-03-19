@@ -34,6 +34,7 @@ class Customer(db.Model):
     sec_verify = db.Column(db.Boolean(), nullable=False)
     balance = db.Column(db.Float(),nullable=False)
     #transactions = db.relationship('Transaction')
+    
 class Merchant(db.Model):
     # 定以表名
     __tablename__ = 'Merchants'
