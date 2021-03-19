@@ -293,12 +293,61 @@ def customer_signin():
     except:
         raise Exception("Cannot login user")
 
-@app.route("/api/customer/<person_id>/profile", methods=['POST'])
+def pre_jsonify_transaction(db_obj):
+    # output_dict = {
+    #     "trans_id" : "null",
+    #     "date_time" : "null",
+    #     "amount" : "null",
+    #     "customer_id" : "null",
+    #     "merchant_id" : "null",
+    #     # "customer" : "null",
+    #     # "merchant" : "null",
+    # }
+    output_dict = dict()
+    output_dict['trans_id'] = db_obj.trans_id
+    output_dict['date_time'] = db_obj.date_time
+    output_dict['amount'] = db_obj.amount
+    output_dict['customer_id'] = db_obj.customer_id
+    output_dict['merchant_id'] = db_obj.merchant_id
+    return output_dict
+
+def handle_db_transaction(db_obj):
+
+    multi_dict = dict()
+    trans_dict = dict()
+    cnt=1
+    for instant in db_obj:
+        dictionary = 'Transaction_instance_'+str(cnt)
+        trans_dict[dictionary] = pre_jsonify_transaction(instant)
+        # print ('in func')
+        # print (trans_dict[dictionary])
+        multi_dict.update(trans_dict)
+        # print (multi_dict)
+        cnt += 1
+    trans_dict = multi_dict
+
+    return trans_dict
+
+def pre_jsonify_customer():
+
+    return 1
+
+# @app.route("/api/customer/<person_id>/profile", methods=['POST'])
+@app.route("/api/customer/<person_id>/profile", methods=['GET'])
 def customer_profile(person_id=None):
 
-    record = Transaction.query.filter(Transaction.customer_id == person_id).first()
-    print(record)
-    return jsonify({'level':'success','transaction record': record})
+    record = Transaction.query.filter(Transaction.customer_id == person_id).all()
+    print(type(record))
+    print(len(record))
+    # print(record[0].amount)
+    # print(record[1].amount)
+    # for col in record:
+    #     print(col)
+    trans_list = handle_db_transaction(record)
+    print(trans_list)
+
+    return jsonify(trans_list)
+    # return jsonify({'level':'success','transaction record': record})
 
 @app.route("/api/merchant/signin", methods=['POST'])
 def merchant_signin():
@@ -320,7 +369,7 @@ def merchant_signin():
     except:
         raise Exception("Cannot login user")
 
-@app.route("/api/merchant/<person_id>/profile", methods=['POST'])
+@app.route("/api/merchant/<person_id>/profile", methods=['GET'])
 def merchant_profile(person_id=None):
     record = Transaction.query.filter(Transaction.merchant_id == person_id).first()
     print(record)

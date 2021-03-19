@@ -77,7 +77,14 @@ if ("amazonaws" not in db_url):
         customer_id = '1234567890',
         merchant_id = '1234567890'
     )
-    db.session.add_all([customer1,merchant1,transaction1])
+    transaction2 = Transaction(
+        trans_id = 2,
+        amount = 34,
+        customer_id = '1234567890',
+        merchant_id = '1234567890'
+    )
+    db.session.add_all([customer1,merchant1,transaction1,transaction2])
+    # db.session.add_all([customer1,merchant1,transaction1])
     db.session.commit()
     print ("init db is okay")
     print ("dummy print to preserve if statement")
