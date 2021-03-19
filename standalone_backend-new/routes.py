@@ -99,7 +99,7 @@ def post_merchant_info():
 @app.route("/api/customer/register/info", methods=['POST'])
 def post_customer_info():
     data = request.form
-    #print(data)
+    # print(data)
     print(type(data))
 
     if (check_customer_form_not_none(data)):

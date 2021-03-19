@@ -31,7 +31,7 @@ class Customer(db.Model):
     expire_date = db.Column(db.String(10), nullable=False)
     payment_cnt = db.Column(db.Integer(), nullable=True)
     reg_image_cnt = db.Column(db.Integer(), nullable=True)
-    sec_verify = db.Column(db.Boolean(), nullable=False)
+    sec_verify = db.Column(db.Boolean(), nullable=False, default=True)
     balance = db.Column(db.Float(),nullable=False)
     #transactions = db.relationship('Transaction')
     
