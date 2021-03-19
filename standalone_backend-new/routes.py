@@ -172,18 +172,28 @@ def post_photo(person_id=None):
         if (image_type != "data:image/jpeg;base64"):
             return jsonify({'message': 'the image is not a jpeg type','level':'warning'}), 200
 
-        try:
-            aws_respose = add_faces_to_collection(image_content,person_id,Collection_id)
-            user= Customer.query.get(person_id)
-            print ('user info:',user,'\n')
-            user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
+        faceMatches=search_face_in_collection(image_content,Collection_id)
+        if not faceMatches:
+            try:
+                aws_respose = add_faces_to_collection(image_content,person_id,Collection_id)
+                user= Customer.query.get(person_id)
+                print ('user info:',user,'\n')
+                user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
+                db.session.commit()
+                print (user.aws_id)
+            except IndexError:
+                print ("Error: no face is detected in the image")
+                return jsonify({'message': 'no face is detected','level':'error'}),200
+                
+            return jsonify({'message': 'photo is added','level': 'success'}),200
+        else:
+            cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
+            cus_id = cus.id
+            cus_name = cus.first_name + cus.last_name
+            print("user may had an acount already")
+            Customer.query.filter(Customer.id == person_id).delete()
             db.session.commit()
-            print (user.aws_id)
-        except IndexError:
-            print ("Error: no face is detected in the image")
-            return jsonify({'message': 'no face is detected','level':'error'}),200
-            
-        return jsonify({'message': 'photo is added','level': 'success'}),200
+            return jsonify({'message':'existing face found','level':'warning','Customer_id':cus_id,'Customer_name':cus_name}),200
 
 def check_customer_form_not_none(data):
     if (
