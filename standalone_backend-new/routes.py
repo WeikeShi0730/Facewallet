@@ -227,6 +227,7 @@ def payment_photo(person_id=None):
         print(image_type)
         if (image_type != "data:image/jpeg;base64"):
             return jsonify({'message': 'Error: the image is not a jpeg type','level':'warning'}), 200
+        # if (True):
         try:
             faceMatches=search_face_in_collection(image_content,Collection_id)
             if not faceMatches:
@@ -311,7 +312,7 @@ def pre_jsonify_transaction(db_obj):
     output_dict['merchant_id'] = db_obj.merchant_id
     return output_dict
 
-def mer_handle_db_transaction(db_obj):
+def cust_handle_db_transaction(db_obj):
 
     multi_dict = dict()
     trans_dict = dict()
@@ -338,7 +339,7 @@ def mer_handle_db_transaction(db_obj):
 
     return trans_dict
 
-def cust_handle_db_transaction(db_obj):
+def mer_handle_db_transaction(db_obj):
 
     multi_dict = dict()
     trans_dict = dict()
@@ -406,7 +407,7 @@ def customer_profile(person_id=None):
     # for col in record:
     #     print(col)
     trans_list = dict()
-    trans_list['Transaction'] = mer_handle_db_transaction(record)
+    trans_list['Transaction'] = cust_handle_db_transaction(record)
     # print(trans_list)
 
     cust_list = dict()
@@ -453,7 +454,7 @@ def merchant_profile(person_id=None):
     # for col in record:
     #     print(col)
     trans_list = dict()
-    trans_list['Transaction'] = cust_handle_db_transaction(record)
+    trans_list['Transaction'] = mer_handle_db_transaction(record)
     # print(trans_list)
 
     mer_list = dict()
