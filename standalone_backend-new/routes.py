@@ -328,9 +328,23 @@ def handle_db_transaction(db_obj):
 
     return trans_dict
 
-def pre_jsonify_customer():
-
-    return 1
+def pre_jsonify_customer(db_obj):
+    output_dict = dict()
+    output_dict['id'] = db_obj.id
+    output_dict['aws_id'] = db_obj.aws_id
+    output_dict['first_name'] = db_obj.first_name
+    output_dict['last_name'] = db_obj.last_name
+    # output_dict['phone_number'] = db_obj.phone_number
+    # output_dict['email'] = db_obj.email
+    # output_dict['password'] = db_obj.phone_numbpassworder
+    output_dict['card_number'] = db_obj.card_number
+    # output_dict['cvv'] = db_obj.cvv
+    # output_dict['expire_date'] = db_obj.expire_date
+    # output_dict['payment_cnt'] = db_obj.payment_cnt
+    # output_dict['reg_image_cnt'] = db_obj.reg_image_cnt
+    # output_dict['sec_verify'] = db_obj.sec_verify
+    output_dict['balance'] = db_obj.balance
+    return output_dict
 
 # @app.route("/api/customer/<person_id>/profile", methods=['POST'])
 @app.route("/api/customer/<person_id>/profile", methods=['GET'])
@@ -343,10 +357,21 @@ def customer_profile(person_id=None):
     # print(record[1].amount)
     # for col in record:
     #     print(col)
-    trans_list = handle_db_transaction(record)
-    print(trans_list)
+    trans_list = dict()
+    trans_list['Transaction'] = handle_db_transaction(record)
+    # print(trans_list)
 
-    return jsonify(trans_list)
+    cust_list = dict()
+    customer_info = Customer.query.filter(Customer.id == person_id).first()
+    cust_list['Customer'] = pre_jsonify_customer(customer_info)
+    # print(cust_list)
+
+    full_json = dict()
+    full_json.update(trans_list)
+    full_json.update(cust_list)
+    # print(full_json)
+
+    return jsonify(full_json)
     # return jsonify({'level':'success','transaction record': record})
 
 @app.route("/api/merchant/signin", methods=['POST'])
