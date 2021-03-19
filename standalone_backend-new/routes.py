@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, json
 import glob
 import re
 import base64
+import random
 from io import BytesIO, StringIO
 from forms import *
 from database import *
@@ -262,15 +263,16 @@ def payment_photo(person_id=None):
                     mer_id = person_id
                     amount = float(data.get('amount'))
                     New_transaction = Transaction(
+                        trans_id = random.randint(0,100),
                         amount = amount,
                         customer_id = cus_id,
                         merchant_id = mer_id
                         )
                     db.session.add_all([New_transaction])
-                    customer_user = Customer.query.get(cus_id)
-                    customer_user.balance += amount
-                    merchant_user = Merchant.query.get(mer_id)
-                    merchant_user.balance -= amount
+                    customer_user = Customer.query.filter(Customer.id == cus_id).first()
+                    customer_user.balance -= amount
+                    merchant_user = Merchant.query.filter(Merchant.id == mer_id).first()
+                    merchant_user.balance += amount
                     db.session.commit()
                     print ("merchant_user:")
                     print (merchant_user.balance)
