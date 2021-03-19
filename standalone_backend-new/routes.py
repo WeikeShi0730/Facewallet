@@ -319,6 +319,13 @@ def handle_db_transaction(db_obj):
     for instant in db_obj:
         dictionary = 'Transaction_instance_'+str(cnt)
         trans_dict[dictionary] = pre_jsonify_transaction(instant)
+
+        #query shop name
+        merchant_id = trans_dict[dictionary]['merchant_id']
+        shop_name = Merchant.query.filter(Merchant.id == merchant_id).first().shop_name
+        shop_dict = {'shop_name' : shop_name}
+        trans_dict[dictionary].update(shop_dict)
+
         # print ('in func')
         # print (trans_dict[dictionary])
         multi_dict.update(trans_dict)
