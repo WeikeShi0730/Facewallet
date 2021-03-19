@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from main import app, db
+from main import app, db, db_url
 import datetime
 # 配置数据库地址
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
@@ -63,3 +63,49 @@ class Transaction(db.Model):
    merchant_id = db.Column(db.String(50), db.ForeignKey('Merchants.id'))
    customer = db.relationship(Customer)
    merchant = db.relationship(Merchant)
+
+def reset_db_with_some_initials():
+    if ("amazonaws" not in db_url):
+        # 删除表
+        db.drop_all()
+        # 创建表
+        db.create_all()
+        customer1=Customer(
+            id='1234567890',
+            first_name='test',
+            last_name='test',
+            email='123@123.ca',
+            password='123',
+            phone_number='1234567890',
+            card_number='1234123412341234',
+            cvv='123',
+            expire_date='0922',
+            sec_verify=False,
+            balance=100
+            )
+        merchant1 = Merchant(
+            id='1234567890',
+            first_name='test',
+            last_name='test',
+            email='123@123.ca',
+            password='123',
+            shop_name='cap',
+            balance = 100
+        )
+        transaction1 = Transaction(
+            # trans_id = 1,
+            amount = 12,
+            customer_id = '1234567890',
+            merchant_id = '1234567890'
+        )
+        transaction2 = Transaction(
+            # trans_id = 2,
+            amount = 34,
+            customer_id = '1234567890',
+            merchant_id = '1234567890'
+        )
+        db.session.add_all([customer1,merchant1,transaction1,transaction2])
+        # db.session.add_all([customer1,merchant1,transaction1])
+        db.session.commit()
+        print ("init db is okay")
+        print ("dummy print to preserve if statement")
