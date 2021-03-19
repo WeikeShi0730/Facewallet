@@ -74,7 +74,7 @@ def reset_db_with_some_initials():
             id='1234567890',
             first_name='test',
             last_name='test',
-            email='123@123.ca',
+            email='test@123.ca',
             password='123',
             phone_number='1234567890',
             card_number='1234123412341234',
@@ -87,7 +87,7 @@ def reset_db_with_some_initials():
             id='1234567890',
             first_name='test',
             last_name='test',
-            email='123@123.ca',
+            email='test@123.ca',
             password='123',
             shop_name='cap',
             balance = 100
