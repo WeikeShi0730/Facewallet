@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, json
+from flask import Flask, jsonify, request, json,session
 import glob
 import re
 import base64
@@ -129,13 +129,12 @@ def post_customer_info():
                 card_number=data['card_number'],
                 cvv=data['cvv'],
                 expire_date=data['expire_date'],
-                sec_verify = data['secondary']=='false',
+                sec_verify = data['secondary']=='true',
                 balance = 100
                 # MM_todo - register payment cnt intialize t0 0
             )
             db.session.add_all([customer_info])
             db.session.commit()
-
             return jsonify({'message': 'ok, the text info is added into db', 'person_id': person_id,'level':'info'}), 200
 
     else:
@@ -177,7 +176,7 @@ def post_photo(person_id=None):
         if not faceMatches:
             try:
                 aws_respose = add_faces_to_collection(image_content,person_id,Collection_id)
-                user= Customer.query.get(person_id)
+                user= Customer.query.filter(Customer.id == person_id).first()
                 print ('user info:',user,'\n')
                 user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
                 db.session.commit()
@@ -246,44 +245,99 @@ def payment_photo(person_id=None):
                 return jsonify({'message': 'no record faces in the input image','level':'warning'}),200
             else:
                 print ('Matching faces')
-                
+                aws_face_ids = []
                 for match in faceMatches:
                         print ('FaceId:' + match['Face']['FaceId'])
                         print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
+                        aws_face_ids.append(match['Face']['FaceId'])
                 if len(faceMatches)>1:
                 # if False:
                     print("Identical faces found")
+                    session['amount'] = float(data.get('amount'))
+                    session['AWS_IDs'] = aws_face_ids
+                    cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
+
                     return jsonify({'message':'Secondary verification needed','level':'warning'})
                 else:
                     print ("FaceId")
                     print (faceMatches[0]['Face']['FaceId'])
-                    cus_id = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first().id
-                    print ("cus_id")
-                    print (cus_id)
-                    mer_id = person_id
-                    amount = float(data.get('amount'))
-                    New_transaction = Transaction(
-                        # trans_id = random.randint(0,100),
-                        amount = amount,
-                        customer_id = cus_id,
-                        merchant_id = mer_id
-                        )
-                    db.session.add_all([New_transaction])
-                    customer_user = Customer.query.filter(Customer.id == cus_id).first()
-                    customer_user.balance -= amount
-                    merchant_user = Merchant.query.filter(Merchant.id == mer_id).first()
-                    merchant_user.balance += amount
-                    db.session.commit()
-                    print ("merchant_user:")
-                    print (merchant_user.balance)
-                    print ("cust_user:")
-                    print (customer_user.balance)
-                    
-                    return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
-                                    'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity'], 'level':'success'}),200
+                    cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
+                    if cus.sec_verify:
+                        session['amount'] = float(data.get('amount'))
+                        session['AWS_IDs'] = aws_face_ids
+                        return jsonify({'message':'Secondary verification needed','level':'warning'})
+                    else:
+                        cus_id = cus.id
+                        print ("cus_id")
+                        print (cus_id)
+                        mer_id = person_id
+                        amount = float(data.get('amount'))
+                        New_transaction = Transaction(
+                            # trans_id = random.randint(0,100),
+                            amount = amount,
+                            customer_id = cus_id,
+                            merchant_id = mer_id
+                            )
+                        db.session.add_all([New_transaction])
+                        customer_user = Customer.query.filter(Customer.id == cus_id).first()
+                        customer_user.balance -= amount
+                        merchant_user = Merchant.query.filter(Merchant.id == mer_id).first()
+                        merchant_user.balance += amount
+                        db.session.commit()
+                        print ("merchant_user:")
+                        print (merchant_user.balance)
+                        print ("cust_user:")
+                        print (customer_user.balance)
+                        
+                        return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
+                                        'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity'], 'level':'success'}),200
         except:
            print ("detect failure")
            return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
+
+@app.route("/api/merchant/<person_id>/facepay/verification", methods=['POST'])
+def verification(person_id=None):
+    try:
+        print("Activate Verification")
+        data = json.loads(request.data, strict=False)
+        face_ids = session.get('AWS_IDs')
+        print(data['phone_number'])
+        print(face_ids)
+        cus = Customer.query.filter(Customer.phone_number == data['phone_number'] ).first()
+        for aws_id in face_ids:
+            if  aws_id == cus.aws_id:
+                
+                cus_id = cus.id
+                print ("cus_id: \n")
+                print (cus_id)
+                mer_id = person_id
+                amount = float(session.get('amount'))
+                New_transaction = Transaction(
+                    amount = amount,
+                    customer_id = cus_id,
+                    merchant_id = mer_id
+                    )
+                db.session.add_all([New_transaction])
+                customer_user = Customer.query.get(cus_id)
+                customer_user.balance += amount
+                merchant_user = Merchant.query.get(mer_id)
+                merchant_user.balance -= amount
+                db.session.commit()
+                session.clear()
+                print ("merchant_user:")
+                print (merchant_user.balance)
+                print ("cust_user:")
+                print (customer_user.balance)
+                
+                return jsonify({'message': 'succeed', 'person_id' : aws_id, 
+                                'require_phone_number' : 0,  'level':'success'}),200
+            else:
+                print ("detect failure")
+                return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
+
+    except:
+        print ("detect failure")
+        return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
 
 
 @app.route("/api/customer/signin", methods=['POST'])
