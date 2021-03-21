@@ -29,6 +29,7 @@ app.config['JWT_SECRET_KEY'] = 'boost-is-the-secret-of-our-app'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 db_url = os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'super secret key'
 
 jwt=JWTManager(app)
 db=SQLAlchemy(app)
