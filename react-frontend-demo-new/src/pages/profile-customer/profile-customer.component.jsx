@@ -5,6 +5,13 @@ import { connect } from "react-redux";
 
 const ProfileCustomer = ({ currentUser }) => {
   const signedIn = currentUser !== null && currentUser.type === "customer";
+
+  const transactions = currentUser.Transactions.map((transaction) => ({
+    shop: transaction.Merchant.shop_name,
+    amount: transaction.amount,
+    time: transaction.data_time,
+  }));
+
   return (
     <div>{signedIn ? <div>{currentUser.personId}</div> : <div></div>}</div>
   );

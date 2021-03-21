@@ -53,7 +53,11 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     try {
       const personId = json.person_id;
       if (personId === undefined) {
-        alert(json.error);
+        console.log(json)
+        addToast(json.message, {
+          appearance: json.level,
+          autoDismiss: true,
+        });
       } else {
         if (user === "customer") {
           setCurrentUser({

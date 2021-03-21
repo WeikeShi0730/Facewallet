@@ -88,7 +88,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
     ) {
       setIsLoading(true);
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/merchant/${currentUser.personId}/facepay/secondary`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/merchant/${currentUser.personId}/facepay/verification`,
         {
           method: "POST",
           headers: {
