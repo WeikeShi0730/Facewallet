@@ -98,7 +98,6 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
         }
       );
       setIsLoading(false);
-
       if (response.ok) {
         const json = await response.json();
         try {
@@ -115,7 +114,6 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
             appearance: json.level,
             autoDismiss: true,
           });
-          return;
         } catch (error) {
           console.log(error);
           addToast(error.message, {
@@ -124,6 +122,12 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
           });
         }
       }
+      setPhoneNumber("");
+    } else {
+      addToast("Please input your phone number", {
+        appearance: "warning",
+        autoDismiss: true,
+      });
     }
   };
 
@@ -159,21 +163,23 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
 
       <CustomModal
         title="Secondary Verification"
-        onClose={() => setShow(false)}
+        onSubmit={handleSubmitSecondary}
         show={show}
       >
         <label>Please Enter Phone Number</label>
-        <FormInput
-          name="phone_number"
-          type="text"
-          handleChange={handleSubmitSecondary}
-          value={phoneNumber}
-          label="Phone Number"
-          pattern="\d*"
-          minLength="10"
-          maxLength="11"
-          required
-        />
+        <form className="form">
+          <FormInput
+            name="phone_number"
+            type="text"
+            handleChange={handleChange}
+            value={phoneNumber}
+            label="Phone Number"
+            pattern="\d*"
+            minLength="10"
+            maxLength="11"
+            required
+          />
+        </form>
       </CustomModal>
 
       <div className="group">

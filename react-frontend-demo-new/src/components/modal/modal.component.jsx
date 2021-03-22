@@ -30,7 +30,7 @@ const CustomModal = (props) => {
           </div>
           <div className="modal-body">{props.children}</div>
           <div className="modal-footer">
-            <button onClick={props.onClose} className="button">
+            <button onClick={props.onSubmit} className="button">
               Confirm
             </button>
             <button onClick={props.onClose} className="button">
