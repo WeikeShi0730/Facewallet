@@ -6,7 +6,8 @@ from botocore.exceptions import ClientError
 #从本地joe.csv read aws key
 #key 是存在csv里， 也可以写入flask环境变量
 # with open('C:/Users/z9132/Desktop/level-4\capstone/AWS/new_user_credentials.csv','r') as input:
-with open('C:/Users/Michael/Desktop/capstone/new_git/new_user_credentials.csv','r') as input:
+# with open('C:/Users/Michael/Desktop/capstone/new_git/new_user_credentials.csv','r') as input:
+with open('C:/Users/qdhch/Desktop/4th Winter/capstone/new_user_credentials.csv','r') as input:
     next(input)
     reader = csv.reader(input)
     for line in reader:
