@@ -155,8 +155,8 @@ def search_face_in_collection(photo_base64,collection_id):
     source_bytes = base64.b64decode(photo_base64)
     #print(source_bytes)
 
-    threshold = 70
-    maxFaces=2
+    threshold = 90
+    maxFaces=5
 
 
   
