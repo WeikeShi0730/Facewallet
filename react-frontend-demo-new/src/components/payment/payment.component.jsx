@@ -164,6 +164,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
       <CustomModal
         title="Secondary Verification"
         onSubmit={handleSubmitSecondary}
+        onClose={() => setShow(false)}
         show={show}
       >
         <label>Please Enter Phone Number</label>
