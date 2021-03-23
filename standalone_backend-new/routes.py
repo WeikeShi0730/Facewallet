@@ -408,28 +408,54 @@ def cust_handle_db_transaction(db_obj):
 
 def mer_handle_db_transaction(db_obj):
 
-    multi_dict = dict()
-    trans_dict = dict()
-    cnt=1
-    for instant in db_obj:
-        dictionary = 'Transaction_instance_'+str(cnt)
-        trans_dict[dictionary] = pre_jsonify_transaction(instant)
+    if (constant.transaction_is_list == 0):
+        #old hash dict implementation
+        multi_dict = dict()
+        trans_dict = dict()
+        cnt=1
+        for instant in db_obj:
+            dictionary = 'Transaction_instance_'+str(cnt)
+            trans_dict[dictionary] = pre_jsonify_transaction(instant)
 
-        #query customer
-        customer_id = trans_dict[dictionary]['customer_id']
-        customer_info = Customer.query.filter(Customer.id == customer_id).first()
-        cust_list =dict()
-        cust_list['Customer'] = pre_jsonify_customer(customer_info)
-        trans_dict[dictionary].update(cust_list)
+            #query customer
+            customer_id = trans_dict[dictionary]['customer_id']
+            customer_info = Customer.query.filter(Customer.id == customer_id).first()
+            cust_list =dict()
+            cust_list['Customer'] = pre_jsonify_customer(customer_info)
+            trans_dict[dictionary].update(cust_list)
 
-        # print ('in func')
-        # print (trans_dict[dictionary])
-        multi_dict.update(trans_dict)
-        # print (multi_dict)
-        cnt += 1
-    trans_dict = multi_dict
+            # print ('in func')
+            # print (trans_dict[dictionary])
+            multi_dict.update(trans_dict)
+            # print (multi_dict)
+            cnt += 1
+        trans_dict = multi_dict
 
-    return trans_dict
+        return trans_dict
+    else:
+        # #list implementation
+        #old hash dict implementation
+        multi_dict = list()
+        trans_dict = dict()
+        cnt=1
+        for instant in db_obj:
+            dictionary = 'Transaction_instance_'+str(cnt)
+            trans_dict[dictionary] = pre_jsonify_transaction(instant)
+
+            #query customer
+            customer_id = trans_dict[dictionary]['customer_id']
+            customer_info = Customer.query.filter(Customer.id == customer_id).first()
+            cust_list =dict()
+            cust_list['Customer'] = pre_jsonify_customer(customer_info)
+            # trans_dict[dictionary].update(cust_list)
+
+            # print ('in func')
+            # print (trans_dict[dictionary])
+            multi_dict.append(trans_dict)
+            # print (multi_dict)
+            cnt += 1
+
+        return multi_dict
 
 def pre_jsonify_customer(db_obj):
     output_dict = dict()
