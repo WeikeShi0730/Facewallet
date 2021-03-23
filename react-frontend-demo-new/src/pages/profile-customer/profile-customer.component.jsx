@@ -6,49 +6,73 @@ import { useToasts } from "react-toast-notifications";
 
 const ProfileCustomer = ({ currentUser }) => {
   const { addToast } = useToasts();
-  const { transactions, setTransactions } = useState();
+  const [transactions, setTransactions] = useState();
   const signedIn = currentUser !== null && currentUser.type === "customer";
 
   useEffect(() => {
-    handleSubmit();
+    const handleSubmit = async () => {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/customer/${currentUser.personId}/profile`,
+        {
+          method: "GET",
+        }
+      );
+      const json = await response.json();
+      try {
+        const customer = json.Customer;
+        const transactions_json = json.Transaction;
+
+        console.log(json);
+        if (
+          customer.id === undefined ||
+          customer.id === null ||
+          customer.id === ""
+        ) {
+          addToast(json.message, {
+            appearance: json.level,
+            autoDismiss: true,
+          });
+        } else if (customer.id === currentUser.personId) {
+          const transactions_list = [];
+          for (const transaction in transactions_json) {
+            const instance = transactions_json[transaction];
+            transactions_list.push({
+              key: instance.trans_id,
+              shopName: instance.Merchant.shop_name,
+              amount: instance.amount,
+              time: instance.date_time,
+            });
+          }
+          setTransactions(transactions_list);
+        }
+      } catch (error) {
+        addToast(error, {
+          appearance: "error",
+          autoDismiss: true,
+        });
+        console.log("User not found", error);
+      }
+    };
+    handleSubmit(); // eslint-disable-next-line
   }, []);
 
-  const handleSubmit = async (event) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/customer/${currentUser.personId}/profile`,
-      {
-        method: "GET",
-      }
-    );
-    const json = await response.json();
-    try {
-      const personId = json.person_id;
-      if (personId === undefined) {
-        console.log(json);
-        // addToast(json.message, {
-        //   appearance: json.level,
-        //   autoDismiss: true,
-        // });
-      } else {
-        const transactions = currentUser.Transactions.map((transaction) => ({
-          shop: transaction.Merchant.shop_name,
-          amount: transaction.amount,
-          time: transaction.data_time,
-          balance: transaction.balance,
-        }));
-        console.log(transactions);
-        setTransactions(transactions);
-      }
-    } catch (error) {
-      // addToast(error, {
-      //   appearance: "error",
-      //   autoDismiss: true,
-      // });
-      console.log("User not found", error);
-    }
-  };
-
-  return <div>{signedIn ? <div>{transactions}</div> : <div></div>}</div>;
+  return (
+    <div>
+      {signedIn && transactions && transactions.length > 0 ? (
+        <div>
+          {transactions.map((transaction) => (
+            <div key={transaction.key}>
+              <span> {transaction.shopName}------</span>
+              <span> {transaction.amount}------</span>
+              <span> {transaction.time} </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div>No records found</div>
+      )}
+    </div>
+  );
 };
 
 const mapStateToProps = (state) => ({
