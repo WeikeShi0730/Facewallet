@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { useToasts } from "react-toast-notifications";
+import Table from "../../components/table/table.component";
 
-//import "./hompage.styles.scss";
+import "./profile-merchant.styles.scss";
 
 const ProfileMerchant = ({ currentUser }) => {
   const { addToast } = useToasts();
@@ -21,7 +22,7 @@ const ProfileMerchant = ({ currentUser }) => {
       try {
         const merchant = json.Merchant;
         const transactions_json = json.Transaction;
-        console.log(json)
+        console.log(json);
         if (
           merchant.id === undefined ||
           merchant.id === null ||
@@ -37,7 +38,10 @@ const ProfileMerchant = ({ currentUser }) => {
             const instance = transactions_json[transaction];
             transactions_list.push({
               key: instance.trans_id,
-              cutomerName: instance.Customer.first_name + " " + instance.Customer.last_name,
+              cutomerName:
+                instance.Customer.first_name +
+                " " +
+                instance.Customer.last_name,
               cardNumber: instance.Customer.card_number,
               amount: instance.amount,
               time: instance.date_time,
@@ -56,18 +60,40 @@ const ProfileMerchant = ({ currentUser }) => {
     handleSubmit(); // eslint-disable-next-line
   }, []);
 
+  console.log(currentUser);
+  const data = useMemo(() => transactions, [transactions]);
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Customer Name",
+        accessor: "cutomerName",
+      },
+      {
+        Header: "Date",
+        accessor: "time",
+      },
+      {
+        Header: "Amount (CAD)",
+        accessor: "amount",
+        Footer: (info) => {
+          // Only calculate total visits if rows change
+          const total = React.useMemo(
+            () => info.rows.reduce((sum, row) => row.values.amount + sum, 0),
+            [info.rows]
+          );
+          return <div>Total: {total}</div>;
+        },
+      },
+    ],
+    []
+  );
+
   return (
     <div>
       {signedIn && transactions && transactions.length > 0 ? (
         <div>
-          {transactions.map((transaction) => (
-            <div key={transaction.key}>
-              <span> {transaction.cutomerName}------</span>
-              <span> {transaction.cardNumber}------</span>
-              <span> {transaction.amount}------</span>
-              <span> {transaction.time} </span>
-            </div>
-          ))}
+          <h2>Hi {currentUser.personId}!</h2>
+          <Table columns={columns} data={data} />
         </div>
       ) : (
         <div>No records found</div>

@@ -14,8 +14,8 @@ const CustomModal = (props) => {
     document.body.addEventListener("keydown", closeOnEscapeKeyDown);
     return function cleanup() {
       document.body.removeEventListener("keydown", closeOnEscapeKeyDown);
-    };
-  }, []);
+    }; // eslint-disable-next-line
+  }, []); 
 
   return ReactDOM.createPortal(
     <CSSTransition

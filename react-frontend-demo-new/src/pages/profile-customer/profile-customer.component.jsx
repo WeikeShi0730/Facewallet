@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { useToasts } from "react-toast-notifications";
+import Table from "../../components/table/table.component";
 
-//import "./hompage.styles.scss";
+import "./profile-customer.styles.scss";
 
 const ProfileCustomer = ({ currentUser }) => {
   const { addToast } = useToasts();
-  const [transactions, setTransactions] = useState();
+  const [transactions, setTransactions] = useState([]);
+
   const signedIn = currentUser !== null && currentUser.type === "customer";
 
   useEffect(() => {
@@ -21,8 +23,6 @@ const ProfileCustomer = ({ currentUser }) => {
       try {
         const customer = json.Customer;
         const transactions_json = json.Transaction;
-
-        console.log(json);
         if (
           customer.id === undefined ||
           customer.id === null ||
@@ -56,17 +56,39 @@ const ProfileCustomer = ({ currentUser }) => {
     handleSubmit(); // eslint-disable-next-line
   }, []);
 
+  const data = useMemo(() => transactions, [transactions]);
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Shop",
+        accessor: "shopName",
+      },
+      {
+        Header: "Date",
+        accessor: "time",
+      },
+      {
+        Header: "Amount (CAD)",
+        accessor: "amount",
+        Footer: (info) => {
+          // Only calculate total visits if rows change
+          const total = React.useMemo(
+            () => info.rows.reduce((sum, row) => row.values.amount + sum, 0),
+            [info.rows]
+          );
+          return <div>Total: {total}</div>;
+        },
+      },
+    ],
+    []
+  );
+
   return (
     <div>
       {signedIn && transactions && transactions.length > 0 ? (
         <div>
-          {transactions.map((transaction) => (
-            <div key={transaction.key}>
-              <span> {transaction.shopName}------</span>
-              <span> {transaction.amount}------</span>
-              <span> {transaction.time} </span>
-            </div>
-          ))}
+          <h2>Hi {currentUser.personId}!</h2>
+          <Table columns={columns} data={data} />
         </div>
       ) : (
         <div>No records found</div>

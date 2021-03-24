@@ -1,0 +1,63 @@
+.table-class {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  table {
+    border-spacing: 0;
+    border: 5px solid black;
+    tr {
+      :last-child {
+        td {
+          border-bottom: 0;
+        }
+      }
+    }
+    th,
+    td {
+      margin: 0;
+      padding: 0.5rem;
+      border-bottom: 3px solid black;
+      border-right: 3px solid black;
+      :last-child {
+        border-right: 0;
+      }
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span {
+    margin: 0 10px;
+  }
+  button {
+    background-color: transparent;
+    border: none;
+  }
+
+  input {
+    text-align: center;
+    width: 40px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  select {
+    background-color: transparent;
+    border: none;
+    width: 100px;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+  }
+}
