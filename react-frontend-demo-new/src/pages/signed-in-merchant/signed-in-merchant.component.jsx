@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 
-//import "./hompage.styles.scss";
 import { setCurrentUser } from "../../redux/actions/user.action";
 
 import CustomButton from "../../components/custom-buttom/custom-button.component";
@@ -9,7 +8,7 @@ import CustomButton from "../../components/custom-buttom/custom-button.component
 const SignedInMerchant = ({ history, currentUser, setCurrentUser }) => {
   const logOut = () => {
     setCurrentUser({
-      fistName: "",
+      firstName: "",
       lastName: "",
       personId: "",
       type: "",
@@ -22,7 +21,7 @@ const SignedInMerchant = ({ history, currentUser, setCurrentUser }) => {
           history.push(`/merchant/${currentUser.personId}/profile`);
         }}
       >
-        Transaction
+        Transactions
       </CustomButton>
       <CustomButton
         onClick={() => {

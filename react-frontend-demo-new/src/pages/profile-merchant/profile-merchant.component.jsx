@@ -21,6 +21,7 @@ const ProfileMerchant = ({ currentUser }) => {
       const json = await response.json();
       try {
         const merchant = json.Merchant;
+        console.log(merchant)
         const transactions_json = json.Transaction;
         if (
           merchant.id === undefined ||
@@ -97,7 +98,7 @@ const ProfileMerchant = ({ currentUser }) => {
           <Table columns={columns} data={data} />
         </div>
       ) : (
-        <div>No records found</div>
+        <h2>No records found</h2>
       )}
     </div>
   );

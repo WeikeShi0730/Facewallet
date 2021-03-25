@@ -34,6 +34,7 @@ const ProfileCustomer = ({ currentUser }) => {
             autoDismiss: true,
           });
         } else if (customer.id === currentUser.personId) {
+          console.log(currentUser)
           setBalance(customer.balance);
           const transactions_list = [];
           for (const transaction in transactions_json) {
@@ -98,7 +99,7 @@ const ProfileCustomer = ({ currentUser }) => {
           <Table columns={columns} data={data} />
         </div>
       ) : (
-        <div>No records found</div>
+        <h2>No records found</h2>
       )}
     </div>
   );

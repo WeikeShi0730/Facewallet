@@ -30,7 +30,7 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
 
   useEffect(() => {
     setCurrentUser({
-      fistName: "",
+      firstName: "",
       lastName: "",
       personId: "",
       type: "",
@@ -64,17 +64,16 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
           autoDismiss: true,
         });
       } else {
-        console.log("hahshdfahsdf", json);
         if (user === "customer") {
           setCurrentUser({
-            fistName: json.first_name,
+            firstName: json.first_name,
             lastName: json.last_name,
             personId: personId,
             type: "customer",
           });
         } else {
           setCurrentUser({
-            fistName: json.first_name,
+            firstName: json.first_name,
             lastName: json.last_name,
             personId: personId,
             type: "merchant",

@@ -11,7 +11,7 @@ const MainCustomer = ({ history, currentUser, setCurrentUser }) => {
 
   const logOut = () => {
     setCurrentUser({
-      fistName: "",
+      firstName: "",
       lastName: "",
       personId: "",
       type: "",
@@ -27,7 +27,7 @@ const MainCustomer = ({ history, currentUser, setCurrentUser }) => {
               history.push(`/customer/${currentUser.personId}/profile`);
             }}
           >
-            {currentUser.personId}
+            Transactions
           </CustomButton>
           <CustomButton
             onClick={() => {

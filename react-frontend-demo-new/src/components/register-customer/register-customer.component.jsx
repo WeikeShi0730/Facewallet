@@ -43,6 +43,12 @@ const Register = ({
     secondary: false,
   });
   const [personId, setPersonId] = useState();
+  const [temp, setTemp] = useState({
+    firstName: "",
+    lastName: "",
+    personId: "",
+    type: "customer",
+  });
 
   // dev
   //const [pwd, setPwd] = useState(false);
@@ -124,7 +130,6 @@ const Register = ({
     history.push("/customer/register/info");
     setIsLoading(true);
     let formData = new FormData();
-    console.log(registerInfo);
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
@@ -135,77 +140,87 @@ const Register = ({
         body: formData,
       }
     );
+    const json = await response.json();
     setIsLoading(false);
-    if (response.ok) {
+    if (response.ok && json.message === "ok, the text info is added into db") {
       setStep({
         ...step,
         info: true,
       });
-      const json = await response.json();
+
       try {
         const personId = json.person_id;
-
         setPersonId(personId);
-        setCurrentUser({
+        setTemp({
           fistName: json.first_name,
           lastName: json.last_name,
           personId: personId,
           type: "customer",
         });
-        addToast(json.message, {
-          appearance: json.level,
-          autoDismiss: true,
-        });
       } catch (error) {
-        console.log(error);
         addToast(error, {
           appearance: json.level,
           autoDismiss: true,
         });
       }
     }
+    addToast(json.message, {
+      appearance: json.level,
+      autoDismiss: true,
+    });
   };
 
   const handleSendPhoto = async () => {
-    if (photo !== null) {
+    if (personId && photo) {
       history.push(`/customer/register/photo/${personId}`);
       setIsLoading(true);
+      let formData = new FormData();
+      for (let field in registerInfo) {
+        formData.append(field, registerInfo[field]);
+      }
+      formData.append("photo", photo);
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/customer/register/photo/${personId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ photo: photo }),
+          body: formData,
         }
       );
       setIsLoading(false);
-      if (response.ok) {
+      const json = await response.json();
+      if (response.ok && json.message === "photo is added") {
         setStep({
           ...step,
           photo: true,
         });
-        const json = await response.json();
-        try {
-          addToast(json.message, {
-            appearance: "success",
-            autoDismiss: true,
-          });
-        } catch (error) {
-          console.log(error);
-          addToast(error, {
-            appearance: "error",
-            autoDismiss: true,
-          });
-        }
+        setCurrentUser({
+          firstName: temp.firstName,
+          lastName: temp.lastName,
+          personId: temp.personId,
+          type: "customer",
+        });
       }
+      addToast(json.message, {
+        appearance: json.level,
+        autoDismiss: true,
+      });
     }
   };
 
   useEffect(() => {
+    setPersonId(undefined)
+    setStep({
+      photo: false,
+      info: false,
+    });
+    setTemp({
+      firstName: "",
+      lastName: "",
+      personId: "",
+      type: "",
+    });
     setCurrentUser({
-      fistName: "",
+      firstName: "",
       lastName: "",
       personId: "",
       type: "",
@@ -218,7 +233,6 @@ const Register = ({
 
   useEffect(() => {
     const { info, photo } = step;
-    console.log(step);
     if (info) {
       setButton(false);
     }
@@ -366,7 +380,6 @@ const Register = ({
               Enable Secondary Verification (Will always be asked to provide
               phone number when paying)
             </label>
-
             <CustomButton type="submit" disable={false}>
               Confirm
             </CustomButton>
