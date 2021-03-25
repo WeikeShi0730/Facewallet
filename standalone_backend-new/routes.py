@@ -168,7 +168,10 @@ def post_photo_test():
 
 @app.route("/api/customer/register/photo/<person_id>", methods=['POST'])
 def post_photo(person_id=None):
-    data = json.loads(request.data, strict=False)
+    if (constant.info_photo_together == 0):
+        data = json.loads(request.data, strict=False)
+    else:
+        data = request.form
     #print (data.get('photo'),'\n')
     print('data tpye of photo',type(data),'\n')
     print('id:',person_id,'\n')
@@ -216,11 +219,16 @@ def post_photo(person_id=None):
                 )
                 db.session.add_all([customer_info])
                 db.session.commit()
-
-            return jsonify({'message': 'photo is added',
-            'first_name':user.first_name,
-            'last_name':user.last_name,
-            'level': 'success'}),200
+            if (constant.info_photo_together == 0):
+                return jsonify({'message': 'photo is added',
+                'first_name':user.first_name,
+                'last_name':user.last_name,
+                'level': 'success'}),200
+            else:
+                return jsonify({'message': 'photo is added',
+                'first_name':data['first_name'],
+                'last_name':data['last_name'],
+                'level': 'success'}),200
         else:
             cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
             cus_id = cus.id
