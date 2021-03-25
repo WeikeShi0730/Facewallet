@@ -89,7 +89,12 @@ def post_merchant_info():
             )
             db.session.add_all([merchant_info])
             db.session.commit()
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': merchant_id,'level':'info'}), 200
+            return jsonify({'message': 'ok, the text info is added into db',
+            'first_name':data['first_name'],
+            'last_name':data['last_name'],
+            'shop_name':data['shop_name'],
+            'person_id': merchant_id,
+            'level':'info'}), 200
 
     else:
         print("form contains None")
@@ -135,7 +140,11 @@ def post_customer_info():
             )
             db.session.add_all([customer_info])
             db.session.commit()
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': person_id,'level':'info'}), 200
+            return jsonify({'message': 'ok, the text info is added into db',
+            'person_id': person_id,
+            'first_name':data['first_name'],
+            'last_name':data['last_name'],
+            'level':'info'}), 200
 
     else:
         print("form contains None")
@@ -185,15 +194,20 @@ def post_photo(person_id=None):
                 print ("Error: no face is detected in the image")
                 return jsonify({'message': 'no face is detected','level':'error'}),200
                 
-            return jsonify({'message': 'photo is added','level': 'success'}),200
+            return jsonify({'message': 'photo is added',
+            'first_name':user.first_name,
+            'last_name':user.last_name,
+            'level': 'success'}),200
         else:
             cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
             cus_id = cus.id
-            cus_name = cus.first_name + cus.last_name
             print("user may had an acount already")
             Customer.query.filter(Customer.id == person_id).delete()
             db.session.commit()
-            return jsonify({'message':'existing face found','level':'warning','Customer_id':cus_id,'Customer_name':cus_name}),200
+            return jsonify({'message':'existing face found','level':'warning',
+            'Customer_id':cus_id,
+            'first_name':cus.first_name,
+            'last_name':cus.last_name,}),200
 
 def check_customer_form_not_none(data):
     if (
@@ -289,8 +303,13 @@ def payment_photo(person_id=None):
                         print ("cust_user:")
                         print (customer_user.balance)
                         
-                        return jsonify({'message': 'succeed', 'person_id' : faceMatches[0]['Face']['FaceId'], 
-                                        'require_phone_number' : 0, 'Similarity' : faceMatches[0]['Similarity'], 'level':'success'}),200
+                        return jsonify({'message': 'succeed',
+                        'person_id' : faceMatches[0]['Face']['FaceId'],
+                        'first_name': customer_user.first_name,
+                        'last_name':customer_user.last_name,
+                        'require_phone_number' : 0,
+                        'Similarity' : faceMatches[0]['Similarity'],
+                        'level':'success'}),200
         except:
            print ("detect failure")
            return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
@@ -319,9 +338,9 @@ def verification(person_id=None):
                     )
                 db.session.add_all([New_transaction])
                 customer_user = Customer.query.get(cus_id)
-                customer_user.balance += amount
+                customer_user.balance -= amount
                 merchant_user = Merchant.query.get(mer_id)
-                merchant_user.balance -= amount
+                merchant_user.balance += amount
                 db.session.commit()
                 session.clear()
                 print ("merchant_user:")
@@ -329,8 +348,12 @@ def verification(person_id=None):
                 print ("cust_user:")
                 print (customer_user.balance)
                 
-                return jsonify({'message': 'succeed', 'person_id' : aws_id, 
-                                'require_phone_number' : 0,  'level':'success'}),200
+                return jsonify({'message': 'succeed',
+                'person_id' : aws_id,
+                'first_name': customer_user.first_name,
+                'last_name':customer_user.last_name,
+                'require_phone_number' : 0,
+                'level':'success'}),200
             else:
                 print ("detect failure")
                 return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
@@ -347,13 +370,17 @@ def customer_signin():
         password = request.form["password"]
         current_user = Customer.query.filter(Customer.email == email).first()
         if not current_user:
-            return {'message': 'User not in DB. Register as a new user','level':'error'}
+            return {'message': 'User does not exist','level':'warning'}
 
         password = hashlib.md5(password.encode()).hexdigest()    
         if current_user.password == password:
             access_token = create_access_token(identity=email)
             refresh_token = create_refresh_token(identity=email)
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id,'level':'error'}), 200
+            return jsonify({'message': 'password verified',
+            'person_id': current_user.id,
+            'first_name': current_user.first_name,
+            'last_name':current_user.last_name,
+            'level':'success'}), 200
 
         else:
             return jsonify({'message': 'Wrong credentials','level':'error'})
@@ -523,13 +550,18 @@ def merchant_signin():
         password = request.form["password"]
         current_user = Merchant.query.filter(Merchant.email == email).first()
         if not current_user:
-            return {'message': 'User not in DB. Register as a new user','level':'error'}
+            return {'message': 'User does not exist','level':'warning'}
 
         password = hashlib.md5(password.encode()).hexdigest()    
         if current_user.password == password:
             access_token = create_access_token(identity=email)
             refresh_token = create_refresh_token(identity=email)
-            return jsonify({'message': 'ok, the text info is added into db', 'person_id': current_user.id,'level':'info'}), 200
+            return jsonify({'message': 'password verified',
+            'person_id': current_user.id,
+            'first_name': current_user.first_name,
+            'last_name':current_user.last_name,
+            'shop_name':current_user.shop_name,
+            'level':'success'}), 200
 
         else:
             return jsonify({'message': 'Wrong credentials','level':'error'})
