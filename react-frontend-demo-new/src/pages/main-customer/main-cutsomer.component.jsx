@@ -11,6 +11,8 @@ const MainCustomer = ({ history, currentUser, setCurrentUser }) => {
 
   const logOut = () => {
     setCurrentUser({
+      fistName: "",
+      lastName: "",
       personId: "",
       type: "",
     });

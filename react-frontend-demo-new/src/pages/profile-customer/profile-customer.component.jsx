@@ -8,6 +8,7 @@ import "./profile-customer.styles.scss";
 const ProfileCustomer = ({ currentUser }) => {
   const { addToast } = useToasts();
   const [transactions, setTransactions] = useState([]);
+  const [balance, setBalance] = useState([]);
 
   const signedIn = currentUser !== null && currentUser.type === "customer";
 
@@ -33,6 +34,7 @@ const ProfileCustomer = ({ currentUser }) => {
             autoDismiss: true,
           });
         } else if (customer.id === currentUser.personId) {
+          setBalance(customer.balance);
           const transactions_list = [];
           for (const transaction in transactions_json) {
             const instance = transactions_json[transaction];
@@ -59,6 +61,10 @@ const ProfileCustomer = ({ currentUser }) => {
   const data = useMemo(() => transactions, [transactions]);
   const columns = useMemo(
     () => [
+      {
+        Header: "Transaction ID#",
+        accessor: "key",
+      },
       {
         Header: "Shop",
         accessor: "shopName",
@@ -87,7 +93,8 @@ const ProfileCustomer = ({ currentUser }) => {
     <div>
       {signedIn && transactions && transactions.length > 0 ? (
         <div>
-          <h2>Hi {currentUser.personId}!</h2>
+          <h2>Hi {currentUser.firstName}!</h2>
+          <h4>Current Balance: ${balance}</h4>
           <Table columns={columns} data={data} />
         </div>
       ) : (

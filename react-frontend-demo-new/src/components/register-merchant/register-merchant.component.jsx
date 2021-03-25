@@ -84,6 +84,8 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
       try {
         const personId = json.person_id;
         setCurrentUser({
+          fistName: json.first_name,
+          lastName: json.last_name,
           personId: personId,
           type: "merchant",
         });
@@ -97,6 +99,8 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
 
   useEffect(() => {
     setCurrentUser({
+      fistName: "",
+      lastName: "",
       personId: "",
       type: "",
     }); // eslint-disable-next-line

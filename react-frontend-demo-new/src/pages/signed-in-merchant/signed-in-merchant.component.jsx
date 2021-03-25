@@ -9,6 +9,8 @@ import CustomButton from "../../components/custom-buttom/custom-button.component
 const SignedInMerchant = ({ history, currentUser, setCurrentUser }) => {
   const logOut = () => {
     setCurrentUser({
+      fistName: "",
+      lastName: "",
       personId: "",
       type: "",
     });

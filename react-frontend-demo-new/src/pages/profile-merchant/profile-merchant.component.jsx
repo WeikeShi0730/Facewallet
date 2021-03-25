@@ -22,7 +22,6 @@ const ProfileMerchant = ({ currentUser }) => {
       try {
         const merchant = json.Merchant;
         const transactions_json = json.Transaction;
-        console.log(json);
         if (
           merchant.id === undefined ||
           merchant.id === null ||
@@ -54,16 +53,18 @@ const ProfileMerchant = ({ currentUser }) => {
           appearance: "error",
           autoDismiss: true,
         });
-        console.log("User not found", error);
       }
     };
     handleSubmit(); // eslint-disable-next-line
   }, []);
 
-  console.log(currentUser);
   const data = useMemo(() => transactions, [transactions]);
   const columns = useMemo(
     () => [
+      {
+        Header: "Transaction ID#",
+        accessor: "key",
+      },
       {
         Header: "Customer Name",
         accessor: "cutomerName",
@@ -92,7 +93,7 @@ const ProfileMerchant = ({ currentUser }) => {
     <div>
       {signedIn && transactions && transactions.length > 0 ? (
         <div>
-          <h2>Hi {currentUser.personId}!</h2>
+          <h2>Hi {currentUser.firstName}!</h2>
           <Table columns={columns} data={data} />
         </div>
       ) : (

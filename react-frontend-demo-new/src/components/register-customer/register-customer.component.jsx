@@ -124,7 +124,7 @@ const Register = ({
     history.push("/customer/register/info");
     setIsLoading(true);
     let formData = new FormData();
-    console.log(registerInfo)
+    console.log(registerInfo);
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
@@ -144,8 +144,11 @@ const Register = ({
       const json = await response.json();
       try {
         const personId = json.person_id;
+
         setPersonId(personId);
         setCurrentUser({
+          fistName: json.first_name,
+          lastName: json.last_name,
           personId: personId,
           type: "customer",
         });
@@ -202,6 +205,8 @@ const Register = ({
 
   useEffect(() => {
     setCurrentUser({
+      fistName: "",
+      lastName: "",
       personId: "",
       type: "",
     }); // eslint-disable-next-line

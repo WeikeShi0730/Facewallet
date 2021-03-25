@@ -30,6 +30,8 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
 
   useEffect(() => {
     setCurrentUser({
+      fistName: "",
+      lastName: "",
       personId: "",
       type: "",
     }); // eslint-disable-next-line
@@ -44,28 +46,36 @@ const SignIn = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     for (let field in signInInfo) {
       formData.append(field, signInInfo[field]);
     }
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/${user}/signin`, {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/${user}/signin`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
     setIsLoading(false);
     const json = await response.json();
     try {
       const personId = json.person_id;
+      console.log(json);
       if (personId === undefined) {
-        console.log(json)
         addToast(json.message, {
           appearance: json.level,
           autoDismiss: true,
         });
       } else {
+        console.log("hahshdfahsdf", json);
         if (user === "customer") {
           setCurrentUser({
+            fistName: json.first_name,
+            lastName: json.last_name,
             personId: personId,
             type: "customer",
           });
         } else {
           setCurrentUser({
+            fistName: json.first_name,
+            lastName: json.last_name,
             personId: personId,
             type: "merchant",
           });
