@@ -289,30 +289,39 @@ def payment_photo(person_id=None):
                         print (cus_id)
                         mer_id = person_id
                         amount = float(data.get('amount'))
-                        New_transaction = Transaction(
-                            # trans_id = random.randint(0,100),
-                            amount = amount,
-                            customer_id = cus_id,
-                            merchant_id = mer_id
-                            )
-                        db.session.add_all([New_transaction])
                         customer_user = Customer.query.filter(Customer.id == cus_id).first()
-                        customer_user.balance -= amount
-                        merchant_user = Merchant.query.filter(Merchant.id == mer_id).first()
-                        merchant_user.balance += amount
-                        db.session.commit()
-                        print ("merchant_user:")
-                        print (merchant_user.balance)
-                        print ("cust_user:")
-                        print (customer_user.balance)
-                        
-                        return jsonify({'message': 'succeed',
-                        'person_id' : faceMatches[0]['Face']['FaceId'],
-                        'first_name': customer_user.first_name,
-                        'last_name':customer_user.last_name,
-                        'require_phone_number' : 0,
-                        'Similarity' : faceMatches[0]['Similarity'],
-                        'level':'success'}),200
+                        if customer_user.balance >= amount:
+                            customer_user.balance -= amount
+                            merchant_user = Merchant.query.filter(Merchant.id == mer_id).first()
+                            merchant_user.balance += amount
+                            New_transaction = Transaction(
+                                # trans_id = random.randint(0,100),
+                                amount = amount,
+                                customer_id = cus_id,
+                                merchant_id = mer_id
+                                )
+                            db.session.add_all([New_transaction])
+                            db.session.commit()
+                            print ("merchant_user:")
+                            print (merchant_user.balance)
+                            print ("cust_user:")
+                            print (customer_user.balance)
+                            
+                            return jsonify({'message': 'succeed',
+                            'person_id' : faceMatches[0]['Face']['FaceId'],
+                            'first_name': customer_user.first_name,
+                            'last_name':customer_user.last_name,
+                            'require_phone_number' : 0,
+                            'Similarity' : faceMatches[0]['Similarity'],
+                            'level':'success'}),200
+                        else:
+                            return jsonify({'message': 'incufficient user balance',
+                            'person_id' : faceMatches[0]['Face']['FaceId'],
+                            'first_name': customer_user.first_name,
+                            'last_name':customer_user.last_name,
+                            'require_phone_number' : 0,
+                            'Similarity' : faceMatches[0]['Similarity'],
+                            'level':'warning'}),200
         except:
            print ("detect failure")
            return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
@@ -334,29 +343,37 @@ def verification(person_id=None):
                 print (cus_id)
                 mer_id = person_id
                 amount = float(session.get('amount'))
-                New_transaction = Transaction(
-                    amount = amount,
-                    customer_id = cus_id,
-                    merchant_id = mer_id
-                    )
-                db.session.add_all([New_transaction])
-                customer_user = Customer.query.get(cus_id)
-                customer_user.balance -= amount
-                merchant_user = Merchant.query.get(mer_id)
-                merchant_user.balance += amount
-                db.session.commit()
-                session.clear()
-                print ("merchant_user:")
-                print (merchant_user.balance)
-                print ("cust_user:")
-                print (customer_user.balance)
-                
-                return jsonify({'message': 'succeed',
-                'person_id' : aws_id,
-                'first_name': customer_user.first_name,
-                'last_name':customer_user.last_name,
-                'require_phone_number' : 0,
-                'level':'success'}),200
+                customer_user = Customer.query.filter(Customer.id == cus_id).first()
+                if customer_user.balance >= amount:
+                    customer_user.balance -= amount
+                    merchant_user = Merchant.query.filter(Customer.id == cus_id).first()
+                    merchant_user.balance += amount
+                    New_transaction = Transaction(
+                        amount = amount,
+                        customer_id = cus_id,
+                        merchant_id = mer_id
+                        )
+                    db.session.add_all([New_transaction])
+                    db.session.commit()
+                    session.clear()
+                    print ("merchant_user:")
+                    print (merchant_user.balance)
+                    print ("cust_user:")
+                    print (customer_user.balance)
+                    
+                    return jsonify({'message': 'succeed',
+                    'person_id' : aws_id,
+                    'first_name': customer_user.first_name,
+                    'last_name':customer_user.last_name,
+                    'require_phone_number' : 0,
+                    'level':'success'}),200
+                else:
+                    return jsonify({'message': 'incufficient user balance',
+                    'person_id' : aws_id,
+                    'first_name': customer_user.first_name,
+                    'last_name':customer_user.last_name,
+                    'require_phone_number' : 0,
+                    'level':'warning'}),200
             else:
                 print ("detect failure")
                 return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
