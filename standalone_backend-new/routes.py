@@ -123,23 +123,23 @@ def post_customer_info():
 
             # access_token = create_access_token(identity=data['email'])
             # refresh_token = create_refresh_token(identity=data['email'])
-
-            customer_info = Customer(
-                id=person_id,
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                email=data['email'],
-                password=hashlib.md5(data['password'].encode()).hexdigest(),
-                phone_number=data['phone_number'],
-                card_number=data['card_number'],
-                cvv=data['cvv'],
-                expire_date=data['expire_date'],
-                sec_verify = data['secondary']=='true',
-                balance = 100
-                # MM_todo - register payment cnt intialize t0 0
-            )
-            db.session.add_all([customer_info])
-            db.session.commit()
+            if (constant.info_photo_together == 0):
+                customer_info = Customer(
+                    id=person_id,
+                    first_name=data['first_name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    password=hashlib.md5(data['password'].encode()).hexdigest(),
+                    phone_number=data['phone_number'],
+                    card_number=data['card_number'],
+                    cvv=data['cvv'],
+                    expire_date=data['expire_date'],
+                    sec_verify = data['secondary']=='true',
+                    balance = 100
+                    # MM_todo - register payment cnt intialize t0 0
+                )
+                db.session.add_all([customer_info])
+                db.session.commit()
             return jsonify({'message': 'ok, the text info is added into db',
             'person_id': person_id,
             'first_name':data['first_name'],
@@ -188,15 +188,35 @@ def post_photo(person_id=None):
         if not faceMatches:
             try:
                 aws_respose = add_faces_to_collection(image_content,person_id,Collection_id)
-                user= Customer.query.filter(Customer.id == person_id).first()
-                print ('user info:',user,'\n')
-                user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
-                db.session.commit()
-                print (user.aws_id)
+                if (constant.info_photo_together == 0):
+                    user= Customer.query.filter(Customer.id == person_id).first()
+                    print ('user info:',user,'\n')
+                    user.aws_id = aws_respose['FaceRecords'][0]['Face']['FaceId']
+                    db.session.commit()
+                    print (user.aws_id)
             except IndexError:
                 print ("Error: no face is detected in the image")
                 return jsonify({'message': 'no face is detected','level':'error'}),200
-                
+            
+            if (constant.info_photo_together == 1):
+                customer_info = Customer(
+                    id=person_id,
+                    aws_id=aws_respose['FaceRecords'][0]['Face']['FaceId'],
+                    first_name=data['first_name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    password=hashlib.md5(data['password'].encode()).hexdigest(),
+                    phone_number=data['phone_number'],
+                    card_number=data['card_number'],
+                    cvv=data['cvv'],
+                    expire_date=data['expire_date'],
+                    sec_verify = data['secondary']=='true',
+                    balance = 100
+                    # MM_todo - register payment cnt intialize t0 0
+                )
+                db.session.add_all([customer_info])
+                db.session.commit()
+
             return jsonify({'message': 'photo is added',
             'first_name':user.first_name,
             'last_name':user.last_name,
@@ -205,8 +225,9 @@ def post_photo(person_id=None):
             cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
             cus_id = cus.id
             print("user may had an acount already")
-            Customer.query.filter(Customer.id == person_id).delete()
-            db.session.commit()
+            if (constant.info_photo_together == 0):
+                Customer.query.filter(Customer.id == person_id).delete()
+                db.session.commit()
             return jsonify({'message':'existing face found','level':'warning',
             'Customer_id':cus_id,
             'first_name':cus.first_name,

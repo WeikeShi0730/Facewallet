@@ -6,3 +6,4 @@ REG_PHOTO_FOLDER = "./cache_register_photo/"
 PAY_PHOTO_FOLDER = "./cache_payment_photo/"
 
 transaction_is_list = 0
+info_photo_together = 0
