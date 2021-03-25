@@ -51,6 +51,10 @@
     margin: 0;
   }
 
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
   select {
     background-color: transparent;
     border: none;

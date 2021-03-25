@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback } from "react";
 import { connect } from "react-redux";
 import { useToasts } from "react-toast-notifications";
+import NumPad from "react-numpad";
 
 import { setAmount } from "../../redux/actions/payment.action";
 import { setIsLoading } from "../../redux/actions/loading.action";
@@ -185,15 +186,22 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
 
       <div className="group">
         <WebcamWindow ref={webcamRef} />
+
         <form className="form" onSubmit={handleSubmit}>
-          <FormInput
-            name="total"
-            type="number"
-            handleChange={handleChange}
-            value={amount}
-            label="Total"
-            required
-          />
+          <NumPad.Number
+            decimal={2}
+            negative={false}
+            onChange={(value) => setAmount(Number(value))}
+          >
+            <FormInput
+              handleChange={handleChange}
+              name="total"
+              type="number"
+              value={amount}
+              label="Total"
+              required
+            />
+          </NumPad.Number>
           <CustomButton type="submit">Confirm</CustomButton>
         </form>
       </div>
