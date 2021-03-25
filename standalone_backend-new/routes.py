@@ -13,7 +13,7 @@ import sys
 sys.path.append('.')
 from register import *
 from Aws_functions import *
-from main import app,db, Collection_id, client
+from main import app,db, Collection_id, client,Identical_face_register_enable
 
 @app.route("/")
 def homepage():
@@ -181,7 +181,10 @@ def post_photo(person_id=None):
         if (image_type != "data:image/jpeg;base64"):
             return jsonify({'message': 'the image is not a jpeg type','level':'warning'}), 200
 
-        faceMatches=search_face_in_collection(image_content,Collection_id)
+        if Identical_face_register_enable:
+            faceMatches=False
+        else:
+            faceMatches=search_face_in_collection(image_content,Collection_id)
         if not faceMatches:
             try:
                 aws_respose = add_faces_to_collection(image_content,person_id,Collection_id)

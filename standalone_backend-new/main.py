@@ -38,7 +38,7 @@ Region = os.environ['REGION_NAME']
 Aws_access_key_id = os.environ['AWS_ACCESS_KEY_ID']
 Aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
 Collection_id = os.environ['COLLECTION_ID']
-
+Identical_face_register_enable = True
 client = boto3.client('rekognition', region_name=Region, aws_access_key_id=Aws_access_key_id, aws_secret_access_key=Aws_secret_access_key)
 
 
