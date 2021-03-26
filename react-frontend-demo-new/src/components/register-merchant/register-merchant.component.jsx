@@ -47,10 +47,12 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
   };
   const checkPassword = (event) => {
     var pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
-    if (event.target.value.match(pattern)) {
-      setPwd(true);
-    } else {
-      setPwd(false);
+    if (event.target.name === "password") {
+      if (event.target.value.match(pattern)) {
+        setPwd(true);
+      } else {
+        setPwd(false);
+      }
     }
   };
   const checkPasswordMatch = () => {
@@ -73,10 +75,13 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
     for (let field in registerInfo) {
       formData.append(field, registerInfo[field]);
     }
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/merchant/register`, {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/merchant/register`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
     console.log(registerInfo);
     setIsLoading(false);
     if (response.ok) {

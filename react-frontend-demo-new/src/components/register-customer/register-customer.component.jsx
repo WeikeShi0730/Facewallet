@@ -84,10 +84,12 @@ const Register = ({
   };
   const checkPassword = (event) => {
     var pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
-    if (event.target.value.match(pattern)) {
-      setPwd(true);
-    } else {
-      setPwd(false);
+    if (event.target.name === "password") {
+      if (event.target.value.match(pattern)) {
+        setPwd(true);
+      } else {
+        setPwd(false);
+      }
     }
   };
   const checkPasswordMatch = () => {
@@ -158,6 +160,7 @@ const Register = ({
           type: "customer",
         });
       } catch (error) {
+        console.log(error);
         addToast(error, {
           appearance: json.level,
           autoDismiss: true,
@@ -208,7 +211,7 @@ const Register = ({
   };
 
   useEffect(() => {
-    setPersonId(undefined)
+    setPersonId(undefined);
     setStep({
       photo: false,
       info: false,
