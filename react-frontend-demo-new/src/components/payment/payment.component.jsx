@@ -164,21 +164,21 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
       </CustomModal>
 
       <div className="group">
-        <div className={`${checkmark === 0 ? "mark" : ""}`}>
+        <div className={`${checkmark === 1 ? "mark" : ""}`}>
           <svg
-            className={`${checkmark === 0 ? "checkmark" : "uncheckmark"}`}
+            className={`${checkmark === 1 ? "checkmark" : "uncheckmark"}`}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 52 52"
           >
             <circle
-              className={`${checkmark === 0 ? "checkmark__circle" : ""}`}
+              className={`${checkmark === 1 ? "checkmark__circle" : ""}`}
               cx="50%"
               cy="50%"
               r="25"
               fill="none"
             />
             <path
-              className={`${checkmark === 0 ? "checkmark__check" : ""}`}
+              className={`${checkmark === 1 ? "checkmark__check" : ""}`}
               fill="none"
               d="M14.1 27.2l7.1 7.2 16.7-16.8"
             />
