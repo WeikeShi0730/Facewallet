@@ -10,14 +10,17 @@
     font-size: 25px;
     margin: 15px;
 
-    
     text-decoration: none;
   }
-
-  .title {
-    color: antiquewhite;
-    font-size: 50px;
-    display: block;
-    text-align: center;
+  .group {
+    .logo {
+      width: 70px;
+    }
+    .title {
+      color: antiquewhite;
+      font-size: 50px;
+      display: block;
+      text-align: center;
+    }
   }
 }
