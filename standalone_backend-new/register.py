@@ -10,10 +10,10 @@ def check_person_existence_C(data):
     existing = Customer.query.filter(Customer.first_name ==data['first_name'], 
     Customer.last_name==data['last_name'],
     Customer.card_number==data['card_number'],
-    Customer.phone_number==data['phone_numer'],
+    Customer.phone_number==data['phone_number'],
     Customer.email==data['email']).first()
 
-    phone = Customer.query.filter(Customer.phone_number==data['phone_numer']).first()
+    phone = Customer.query.filter(Customer.phone_number==data['phone_number']).first()
     email = Customer.query.filter(Customer.email==data['email']).first()
 
     if existing != None:
