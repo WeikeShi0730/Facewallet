@@ -69,9 +69,14 @@ def post_merchant_info():
     data = request.form
     if (check_merchant_form_not_none(data)):
         # MM_todo - check person whether exist in data base instead of AI model
-        if (check_person_existence_M(data)):
-            print("user exist")
-            return jsonify({'message': 'user already exist','level':'error'}), 200
+        exists = check_person_existence_M(data)
+        if exists:
+            if exists == 1:
+                print("user exist")
+                return jsonify({'message': 'user already exist','level':'error'}), 200
+            if exists == 2:
+                print("email exist")
+                return jsonify({'message': 'email has been used', 'level':'error'}), 200
         else:
             merchant_id = generate_id()
             # access_token = create_access_token(identity=data['email'])
@@ -107,14 +112,22 @@ def post_customer_info():
     # print(data)
     print(type(data))
 
-    if (check_customer_form_not_none(data)):
+    if check_customer_form_not_none(data):
         person_name_at_bank_acc = data['first_name'] + \
             "_" + data['last_name'] + "@" + data['card_number']
         print('person try to register:',person_name_at_bank_acc,'\n')
         # MM_todo - check person whether exist in data base instead of AI model
-        if (check_person_existence_C(data)):
-            print("user exist")
-            return jsonify({'message': 'user already exist', 'level':'error'}), 200
+        exists = check_person_existence_C(data)
+        if exists:
+            if exists == 1:
+                print("user exist")
+                return jsonify({'message': 'user already exist', 'level':'error'}), 200
+            if exists == 2:
+                print("phone number exist")
+                return jsonify({'message': 'phone number has been used', 'level':'error'}), 200
+            if exists == 3:
+                print("email exist")
+                return jsonify({'message': 'email has been used', 'level':'error'}), 200
         else:
             person_id = generate_id()
             

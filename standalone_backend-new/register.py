@@ -1,3 +1,4 @@
+from wtforms.validators import Email
 from database import Customer,Merchant
 import glob
 import time
@@ -8,11 +9,20 @@ import uuid
 def check_person_existence_C(data):
     existing = Customer.query.filter(Customer.first_name ==data['first_name'], 
     Customer.last_name==data['last_name'],
-    Customer.card_number==data['card_number']).first()
+    Customer.card_number==data['card_number'],
+    Customer.phone_number==data['phone_numer'],
+    Customer.email==data['email']).first()
+
+    phone = Customer.query.filter(Customer.phone_number==data['phone_numer']).first()
+    email = Customer.query.filter(Customer.email==data['email']).first()
 
     if existing != None:
         print(existing.id)
-        return True
+        return 1
+    elif email != None:
+        return 2
+    elif phone != None:
+        return 3
     else:
         return False
 
@@ -21,10 +31,13 @@ def check_person_existence_M(data):
     Merchant.last_name==data['last_name'],
     Merchant.email==data['email'],
     Merchant.shop_name==data['shop_name']).first()
+    email = Merchant.query.filter(Customer.email==data['email']).first()
 
     if existing != None:
         print(existing.id)
-        return True
+        return 1
+    elif email != None:
+        return 2
     else:
         return False
 def generate_id():
