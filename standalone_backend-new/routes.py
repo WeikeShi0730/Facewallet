@@ -123,11 +123,11 @@ def post_customer_info():
                 print("user exist")
                 return jsonify({'message': 'user already exist', 'level':'error'}), 200
             if exists == 2:
-                print("phone number exist")
-                return jsonify({'message': 'phone number has been used', 'level':'error'}), 200
-            if exists == 3:
                 print("email exist")
                 return jsonify({'message': 'email has been used', 'level':'error'}), 200
+            if exists == 3:
+                print("phone number exist")
+                return jsonify({'message': 'phone number has been used', 'level':'error'}), 200
         else:
             person_id = generate_id()
             
