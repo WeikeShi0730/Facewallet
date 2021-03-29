@@ -41,7 +41,14 @@ Collection_id = os.environ['COLLECTION_ID']
 Identical_face_register_enable = True
 client = boto3.client('rekognition', region_name=Region, aws_access_key_id=Aws_access_key_id, aws_secret_access_key=Aws_secret_access_key)
 
-
+if ("amazonaws" in db_url and Collection_id == 'Deploy_Collection'):
+    print ("using online db and deploy face collection")
+elif ("amazonaws" not in db_url and Collection_id == 'Deploy_Collection'):
+    print ("Should not do this !!!!!\n  using local db and deploy face collection")
+elif ("amazonaws" in db_url and Collection_id == 'Test_Collection'):
+    print ("Should not do this !!!!!\n  using online db and local face collection")
+elif ("amazonaws" not in db_url and Collection_id == 'Test_Collection'):
+    print ("using local db and local face collection")
 
 from routes import *
 from database import *
