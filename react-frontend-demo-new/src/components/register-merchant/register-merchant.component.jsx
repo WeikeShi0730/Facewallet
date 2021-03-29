@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
+import { useToasts } from "react-toast-notifications";
 
 import { setIsLoading } from "../../redux/actions/loading.action";
 
@@ -33,6 +34,7 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
   //const [pwd, setPwd] = useState(false);
   const [pwd, setPwd] = useState(true);
   const [match, setMatch] = useState(false);
+  const { addToast } = useToasts();
 
   const handleChange = (event) => {
     const { value, name } = event.target;
@@ -82,24 +84,28 @@ const Register = ({ isLoading, setIsLoading, setCurrentUser, history }) => {
         body: formData,
       }
     );
-    console.log(registerInfo);
     setIsLoading(false);
+    const json = await response.json();
     if (response.ok) {
-      const json = await response.json();
       try {
         const personId = json.person_id;
-        setCurrentUser({
-          firstName: json.first_name,
-          lastName: json.last_name,
-          personId: personId,
-          type: "merchant",
-        });
-        console.log("info regisration success!");
-        history.push(`/merchant/${personId}`);
+        if (personId !== undefined && personId !== null && personId !== "") {
+          setCurrentUser({
+            firstName: json.first_name,
+            lastName: json.last_name,
+            personId: personId,
+            type: "merchant",
+          });
+          history.push(`/merchant/${personId}`);
+        }
       } catch (error) {
         console.log(error);
       }
     }
+    addToast(json.message, {
+      appearance: json.level,
+      autoDismiss: true,
+    });
   };
 
   useEffect(() => {
