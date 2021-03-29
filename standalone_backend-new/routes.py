@@ -70,7 +70,9 @@ def post_merchant_info():
     if (check_merchant_form_not_none(data)):
         # MM_todo - check person whether exist in data base instead of AI model
         exists = check_person_existence_M(data)
+        # print ("exist debug", exists)
         if exists:
+            # print ("enter 1st layer if")
             if exists == 1:
                 print("user exist")
                 return jsonify({'message': 'user already exist','level':'error'}), 200

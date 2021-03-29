@@ -27,16 +27,18 @@ def check_person_existence_C(data):
         return False
 
 def check_person_existence_M(data):
-    existing = Merchant.query.filter(Customer.first_name ==data['first_name'], 
+    existing = Merchant.query.filter(Merchant.first_name ==data['first_name'], 
     Merchant.last_name==data['last_name'],
     Merchant.email==data['email'],
     Merchant.shop_name==data['shop_name']).first()
-    email = Merchant.query.filter(Customer.email==data['email']).first()
+    email = Merchant.query.filter(Merchant.email==data['email']).first()
 
+    # print("debug!!!!",existing.id)
     if existing != None:
         print(existing.id)
         return 1
     elif email != None:
+        print(email.id)
         return 2
     else:
         return False
