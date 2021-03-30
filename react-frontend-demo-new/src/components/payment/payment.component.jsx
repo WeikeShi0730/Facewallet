@@ -18,6 +18,8 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
   const [checkmark, setCheckmark] = useState(0);
   const [show, setShow] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState();
+  const [image, setImage] = useState();
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === "phone_number") {
@@ -31,6 +33,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
   const webcamRef = useRef(null);
   const handleScreenshot = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
+    setImage(imageSrc);
     return imageSrc;
   }, [webcamRef]);
 
@@ -60,11 +63,12 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
             setTimeout(() => {
               setCheckmark(0);
             }, 2500);
-          } else if (json.message === "Secondary verification needed") {
+            setAmount(0);
+          } else if (json.sec_verification === "True") {
             console.log("need seocndary verification");
             setShow(true);
           }
-          addToast(json.message + " " + json.person_id, {
+          addToast(json.message, {
             appearance: json.level,
             autoDismiss: true,
           });
@@ -88,6 +92,8 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
       phoneNumber !== ""
     ) {
       setIsLoading(true);
+
+      console.log(amount);
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/merchant/${currentUser.personId}/facepay/verification`,
         {
@@ -95,7 +101,11 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phone_number: phoneNumber }),
+          body: JSON.stringify({
+            amount: amount,
+            photo: image,
+            phone_number: phoneNumber,
+          }),
         }
       );
       setIsLoading(false);
@@ -124,6 +134,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
         }
       }
       setPhoneNumber("");
+      setAmount(0);
     } else {
       addToast("Please input your phone number", {
         appearance: "warning",
