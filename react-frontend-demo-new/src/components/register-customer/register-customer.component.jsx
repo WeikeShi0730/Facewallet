@@ -154,7 +154,7 @@ const Register = ({
         const personId = json.person_id;
         setPersonId(personId);
         setTemp({
-          fistName: json.first_name,
+          firstName: json.first_name,
           lastName: json.last_name,
           personId: personId,
           type: "customer",

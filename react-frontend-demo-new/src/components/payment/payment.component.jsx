@@ -63,7 +63,6 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
             setTimeout(() => {
               setCheckmark(0);
             }, 2500);
-            setAmount(0);
           } else if (json.sec_verification === "True") {
             console.log("need seocndary verification");
             setShow(true);
@@ -134,7 +133,6 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
         }
       }
       setPhoneNumber("");
-      setAmount(0);
     } else {
       addToast("Please input your phone number", {
         appearance: "warning",
