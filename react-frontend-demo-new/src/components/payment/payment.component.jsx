@@ -121,7 +121,7 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
             }, 2500);
             setShow(false);
           }
-          addToast(json.message + " " + json.person_id, {
+          addToast(json.message, {
             appearance: json.level,
             autoDismiss: true,
           });
