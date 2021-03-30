@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, json,session
+from flask import Flask, jsonify, request, json
 import glob
 import re
 import base64
@@ -306,30 +306,19 @@ def payment_photo(person_id=None):
                 return jsonify({'message': 'no record faces in the input image','level':'warning'}),200
             else:
                 print ('Matching faces')
-                aws_face_ids = []
-                for match in faceMatches:
-                        print ('FaceId:' + match['Face']['FaceId'])
-                        print ('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
-                        aws_face_ids.append(match['Face']['FaceId'])
                 if len(faceMatches)>1:
-                # if False:
-                    print("Identical faces found")
-                    session['amount'] = float(data.get('amount'))
-                    session['AWS_IDs'] = aws_face_ids
-                    cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
-
-                    return jsonify({'message':'Secondary verification needed','level':'warning'})
+                    print('Multiple faces found, need secondary verification')
+                    return jsonify({'message':'Secondary verification needed','level':'warning','sec_verification':'True'})
                 else:
                     print ("FaceId")
                     print (faceMatches[0]['Face']['FaceId'])
                     cus = Customer.query.filter(Customer.aws_id ==faceMatches[0]['Face']['FaceId'] ).first()
                     if cus.sec_verify:
-                        session['amount'] = float(data.get('amount'))
-                        session['AWS_IDs'] = aws_face_ids
-                        return jsonify({'message':'Secondary verification needed','level':'warning'})
+                        print('user activated the secondary verification function, url guide to secondary verification page')
+                        return jsonify({'message':'Secondary verification needed','level':'warning','sec_verification':'True'})
                     else:
                         cus_id = cus.id
-                        print ("cus_id")
+                        print ("cus_id :")
                         print (cus_id)
                         mer_id = person_id
                         amount = float(data.get('amount'))
@@ -346,9 +335,9 @@ def payment_photo(person_id=None):
                                 )
                             db.session.add_all([New_transaction])
                             db.session.commit()
-                            print ("merchant_user:")
+                            print ("merchant_user balance:")
                             print (merchant_user.balance)
-                            print ("cust_user:")
+                            print ("customer_user balance:")
                             print (customer_user.balance)
                             
                             return jsonify({'message': 'succeed',
@@ -372,59 +361,63 @@ def payment_photo(person_id=None):
 
 @app.route("/api/merchant/<person_id>/facepay/verification", methods=['POST'])
 def verification(person_id=None):
-    try:
-        print("Activate Verification")
-        data = json.loads(request.data, strict=False)
-        face_ids = session.get('AWS_IDs')
-        print(data['phone_number'])
-        print(face_ids)
-        cus = Customer.query.filter(Customer.phone_number == data['phone_number'] ).first()
-        for aws_id in face_ids:
-            if  aws_id == cus.aws_id:
-                
-                cus_id = cus.id
-                print ("cus_id: \n")
-                print (cus_id)
-                mer_id = person_id
-                amount = float(session.get('amount'))
-                customer_user = Customer.query.filter(Customer.id == cus_id).first()
-                if customer_user.balance >= amount:
-                    customer_user.balance -= amount
-                    merchant_user = Merchant.query.filter(Customer.id == cus_id).first()
-                    merchant_user.balance += amount
-                    New_transaction = Transaction(
-                        amount = amount,
-                        customer_id = cus_id,
-                        merchant_id = mer_id
-                        )
-                    db.session.add_all([New_transaction])
-                    db.session.commit()
-                    session.clear()
-                    print ("merchant_user:")
-                    print (merchant_user.balance)
-                    print ("cust_user:")
-                    print (customer_user.balance)
-                    
-                    return jsonify({'message': 'succeed',
-                    'person_id' : aws_id,
-                    'first_name': customer_user.first_name,
-                    'last_name':customer_user.last_name,
-                    'require_phone_number' : 0,
-                    'level':'success'}),200
-                else:
-                    return jsonify({'message': 'incufficient user balance',
-                    'person_id' : aws_id,
-                    'first_name': customer_user.first_name,
-                    'last_name':customer_user.last_name,
-                    'require_phone_number' : 0,
-                    'level':'warning'}),200
-            else:
-                print ("detect failure")
-                return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
 
-    except:
-        print ("detect failure")
-        return jsonify({'message': 'detect failure, unexpected error','level':'error'}),200
+    print("Activate Verification")
+    data = json.loads(request.data, strict=False)
+    face_ids = []
+    [image_type, image_content] = re.split(",", data['photo'])
+    faceMatches=search_face_in_collection(image_content,Collection_id)
+    print('faces found: ')
+    for match in faceMatches:
+        print('FaceId:'+ match['Face']['FaceId'])
+        print('Similarity:' + "{:.2f}".format(match['Similarity'])+'%')
+        face_ids.append(match['Face']['FaceId'])
+    print('user input phone number:' +data['phone_number'])
+    cus = Customer.query.filter(Customer.phone_number == data['phone_number'] ).first()
+    if cus is None:
+        return jsonify({'message': 'Phone number does not exist, payment failed',
+        'level':'error'}),200
+
+    for aws_id in face_ids:
+        if  aws_id == cus.aws_id:
+            cus_id = cus.id
+            print ("customer matched, id: " + cus_id)
+            mer_id = person_id
+            amount = float(data['amount'])
+            customer_user = cus
+            if customer_user.balance >= amount:
+                customer_user.balance -= amount
+                merchant_user = Merchant.query.filter(Merchant.id == mer_id).first()
+                merchant_user.balance += amount
+                New_transaction = Transaction(
+                    amount = amount,
+                    customer_id = cus_id,
+                    merchant_id = mer_id
+                    )
+                db.session.add_all([New_transaction])
+                db.session.commit()
+                print ("merchant_user balance :")
+                print (merchant_user.balance)
+                print ("cust_user balance :")
+                print (customer_user.balance)
+                return jsonify({'message': 'succeed',
+                'person_id' : aws_id,
+                'first_name': customer_user.first_name,
+                'last_name':customer_user.last_name,
+                'require_phone_number' : 0,
+                'level':'success'}),200
+            else:
+                return jsonify({'message': 'incufficient user balance',
+                'person_id' : aws_id,
+                'first_name': customer_user.first_name,
+                'last_name':customer_user.last_name,
+                'require_phone_number' : 0,
+                'level':'warning'}),200
+
+    return jsonify({'message': 'Phone number not matched, payment failed',
+    'level':'error'}),200
+
+
 
 
 @app.route("/api/customer/signin", methods=['POST'])
