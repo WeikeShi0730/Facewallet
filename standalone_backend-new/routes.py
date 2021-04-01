@@ -96,7 +96,7 @@ def post_merchant_info():
             )
             db.session.add_all([merchant_info])
             db.session.commit()
-            return jsonify({'message': 'the text info is added into db, but you still need to take a photo to complete the registration',
+            return jsonify({'message': 'the text info is added into db',
             'first_name':data['first_name'],
             'last_name':data['last_name'],
             'shop_name':data['shop_name'],
@@ -155,7 +155,7 @@ def post_customer_info():
                 )
                 db.session.add_all([customer_info])
                 db.session.commit()
-            return jsonify({'message': 'ok, the text info is added into db',
+            return jsonify({'message': 'the text info is okay, but you need to take a photo to complete the registration',
             'person_id': person_id,
             'first_name':data['first_name'],
             'last_name':data['last_name'],
