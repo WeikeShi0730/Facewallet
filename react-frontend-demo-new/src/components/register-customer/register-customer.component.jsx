@@ -144,7 +144,11 @@ const Register = ({
     );
     const json = await response.json();
     setIsLoading(false);
-    if (response.ok && json.message === "ok, the text info is added into db") {
+    if (
+      response.ok &&
+      json.message ===
+        "the text info is okay, but you need to take a photo to complete the registration"
+    ) {
       setStep({
         ...step,
         info: true,
