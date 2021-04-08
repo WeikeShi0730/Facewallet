@@ -158,17 +158,23 @@ function Payment({ amount, isLoading, currentUser, setAmount, setIsLoading }) {
       >
         <label>Please Enter Phone Number</label>
         <form className="form">
-          <FormInput
-            name="phone_number"
-            type="text"
-            handleChange={handleChange}
-            value={phoneNumber}
-            label="Phone Number"
-            pattern="\d*"
-            minLength="10"
-            maxLength="11"
-            required
-          />
+          <NumPad.Number
+            decimal={false}
+            negative={false}
+            onChange={(value) => setPhoneNumber(value)}
+          >
+            <FormInput
+              name="phone_number"
+              type="text"
+              handleChange={handleChange}
+              value={phoneNumber}
+              pattern="\d*"
+              minLength="10"
+              maxLength="11"
+              style={{ color: "black" }}
+              required
+            />
+          </NumPad.Number>
         </form>
       </CustomModal>
 
