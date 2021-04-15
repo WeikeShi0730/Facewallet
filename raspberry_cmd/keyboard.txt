@@ -1,0 +1,5 @@
+sudo apt install matchbox-keyboard
+sudo nano /usr/bin/toggle-keyboard.sh
+sudo chmod +x /usr/bin/toggle-keyboard.sh
+sudo nano /usr/share/raspi-ui-overrides/applications/toggle-keyboard.desktop
+cp /etc/xdg/lxpanel/LXDE-pi/panels/panel /home/pi/.config/lxpanel/LXDE-pi/panels/panel

@@ -1,0 +1,2 @@
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+@/usr/bin/chromium-browser https://facewalletapp.herokuapp.com/<hash>

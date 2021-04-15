@@ -1,0 +1,4 @@
+sudo modprobe bcm2835-v4l2
+sudo sed -i -e "\$asnd-bcm2835" /etc/modules
+sudo sed -i -e "\$abcm2835-v4l2" /etc/modules
+echo "options bcm2835-v4l2 gst_v4l2src_is_broken=1" | sudo tee /etc/modprobe.d/bcm2835-v4l2.conf
